@@ -1,13 +1,17 @@
 import { useState } from "react";
 
+// Button Component
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
 
+// StatisticLine Component
 const StatisticLine = ({ text, value }) => (
-  <p>
-    {text} {value}
-  </p>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 );
 
+// Statistics Component
 const Statistics = ({ good, neutral, bad }) => {
   let all = good + neutral + bad;
   let average = (good * 1 + bad * -1) / all;
@@ -16,17 +20,20 @@ const Statistics = ({ good, neutral, bad }) => {
   if (!good && !neutral && !bad) return <p>No feedback given</p>;
 
   return (
-    <>
-      <StatisticLine text={"good"} value={good} />
-      <StatisticLine text={"neutral"} value={neutral} />
-      <StatisticLine text={"bad"} value={bad} />
-      <StatisticLine text={"all"} value={all} />
-      <StatisticLine text={"average"} value={average} />
-      <StatisticLine text={"positive"} value={positive + " %"} />
-    </>
+    <table>
+      <tbody>
+        <StatisticLine text={"good"} value={good} />
+        <StatisticLine text={"neutral"} value={neutral} />
+        <StatisticLine text={"bad"} value={bad} />
+        <StatisticLine text={"all"} value={all} />
+        <StatisticLine text={"average"} value={average.toFixed(2)} />
+        <StatisticLine text={"positive"} value={positive.toFixed(2) + " %"} />
+      </tbody>
+    </table>
   );
 };
 
+// App Component
 const App = () => {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
