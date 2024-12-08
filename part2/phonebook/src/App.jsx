@@ -25,6 +25,8 @@ const App = () => {
   const addPerson = (e) => {
     e.preventDefault();
 
+    if (!newName.trim()) return;
+
     let newPerson = { name: newName.trim(), number: newNumber };
     let isExist = persons.find(
       (person) => person.name.toLowerCase() === newPerson.name.toLowerCase()
@@ -35,7 +37,9 @@ const App = () => {
       return;
     }
 
-    setPersons((prev) => prev.concat(newPerson));
+    axios.post("http://localhost:3000/persons", newPerson).then((response) => {
+      setPersons((prev) => prev.concat(response.data));
+    });
     setNewName("");
     setNewNumber("");
   };
