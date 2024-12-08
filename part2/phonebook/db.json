@@ -24,6 +24,11 @@
       "id": "0f12",
       "name": "Peter Griffin",
       "number": "12-24-56789"
+    },
+    {
+      "id": "40e0",
+      "name": "Homer Simpson",
+      "number": "98-76-54321"
     }
   ]
 }
