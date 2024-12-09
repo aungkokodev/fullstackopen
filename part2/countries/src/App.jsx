@@ -11,6 +11,10 @@ const App = () => {
     setFilter(e.target.value);
   };
 
+  const handleCountryShow = (country) => {
+    setFilter(country.name.common);
+  };
+
   useEffect(() => {
     countryService.getAll().then((data) => setCountries(data));
   }, []);
@@ -32,7 +36,7 @@ const App = () => {
       ) : result.length === 1 ? (
         <Country country={result[0]} />
       ) : (
-        <CountryList countries={result} />
+        <CountryList countries={result} handleShow={handleCountryShow} />
       )}
     </>
   );
