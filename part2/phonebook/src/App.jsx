@@ -10,18 +10,22 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
 
+  /* */
   const handleNameChange = (e) => {
     setNewName(e.target.value);
   };
 
+  /* */
   const handleNumberChange = (e) => {
     setNewNumber(e.target.value);
   };
 
+  /* */
   const handleFilterChange = (e) => {
     setFilter(e.target.value);
   };
 
+  /* */
   const addPerson = (e) => {
     e.preventDefault();
 
@@ -45,15 +49,27 @@ const App = () => {
     setNewNumber("");
   };
 
-  const personsToShow = persons.filter((person) =>
-    person.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  /* */
+  const removePerson = (person) => {
+    const accept = confirm(`Delete ${person.name}?`);
 
+    if (!accept) return;
+
+    personService.remove(person.id).then((data) => {
+      setPersons((prev) => prev.filter((person) => person.id !== data.id));
+    });
+  };
+
+  /* */
   useEffect(() => {
     personService.getAll().then((data) => {
       setPersons(data);
     });
   }, []);
+
+  const personsToShow = persons.filter((person) =>
+    person.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <div>
@@ -68,7 +84,7 @@ const App = () => {
         onNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} removePerson={removePerson} />
     </div>
   );
 };
