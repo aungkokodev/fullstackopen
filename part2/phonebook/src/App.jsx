@@ -35,9 +35,21 @@ const App = () => {
     let isExist = persons.find(
       (person) => person.name.toLowerCase() === newPerson.name.toLowerCase()
     );
+    newPerson = { ...isExist, ...newPerson };
 
     if (isExist) {
-      alert(`${newName} is already added to phonebook`);
+      let accept = confirm(
+        `${newName} is already added to phonebook, replace the old number number with a new one?`
+      );
+
+      if (!accept) return;
+
+      personService.update(newPerson.id, newPerson).then((data) => {
+        setPersons((prev) =>
+          prev.map((person) => (person.id !== data.id ? person : data))
+        );
+      });
+
       return;
     }
 
