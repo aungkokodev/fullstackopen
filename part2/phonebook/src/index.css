@@ -1,8 +1,16 @@
 .notification {
-  color: #080;
-  border: 0.25rem solid #080;
   border-radius: 0.5rem;
   padding: 0.5rem;
   margin-bottom: 1.5rem;
   background: #ccc;
+}
+
+.success {
+  color: #080;
+  border: 0.25rem solid #080;
+}
+
+.error {
+  color: #800;
+  border: 0.25rem solid #800;
 }

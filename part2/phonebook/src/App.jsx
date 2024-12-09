@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
   const [message, setMessage] = useState(null);
+  const [error, setError] = useState(false);
 
   /* */
   const handleNameChange = (e) => {
@@ -29,7 +30,10 @@ const App = () => {
 
   /* */
   const removeMessage = () => {
-    setTimeout(() => setMessage(null), 5000);
+    setTimeout(() => {
+      setMessage(null);
+      setError(false);
+    }, 5000);
   };
 
   /* */
@@ -55,6 +59,8 @@ const App = () => {
         setPersons((prev) =>
           prev.map((person) => (person.id !== data.id ? person : data))
         );
+        setNewName("");
+        setNewNumber("");
         setMessage(`Updated ${data.name}'s old number with ${data.number}`);
         removeMessage();
       });
@@ -64,6 +70,8 @@ const App = () => {
 
     personService.create(newPerson).then((data) => {
       setPersons((prev) => prev.concat(data));
+      setNewName("");
+      setNewNumber("");
       setMessage(`Added ${data.name}`);
       removeMessage();
     });
@@ -78,9 +86,19 @@ const App = () => {
 
     if (!accept) return;
 
-    personService.remove(person.id).then((data) => {
-      setPersons((prev) => prev.filter((person) => person.id !== data.id));
-    });
+    personService
+      .remove(person.id)
+      .then((data) =>
+        setPersons((prev) => prev.filter((person) => person.id !== data.id))
+      )
+      .catch(() => {
+        setError(true);
+        setMessage(
+          `Information of ${person.name} has already been removed from server`
+        );
+        removeMessage();
+        setPersons((prev) => prev.filter((p) => p.id !== person.id));
+      });
   };
 
   /* */
@@ -97,7 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} error={error} />
       <Filter filter={filter} onChange={handleFilterChange} />
       <h3>add a new</h3>
       <PersonForm
