@@ -26,6 +26,8 @@ let persons = [
   },
 ];
 
+app.use(express.json());
+
 app.get("/api/persons", (request, response) => {
   response.status(200).json(persons);
 });
@@ -44,6 +46,26 @@ app.get("/info", (request, response) => {
       persons.length
     } people</p><p>${Date().toString()}</p>`
   );
+});
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+
+  if (!body.name || !body.number)
+    return response.status(400).json({
+      error: "missing name or number",
+    });
+
+  const id = String(Math.floor(Math.random() * 1000000));
+  const person = {
+    id: id,
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = persons.concat(person);
+
+  response.status(201).json(person);
 });
 
 app.delete("/api/persons/:id", (request, response) => {
