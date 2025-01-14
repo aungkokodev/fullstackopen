@@ -1,9 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT;
+const Person = require("./models/person");
+
 let persons = [
   {
     id: "1",
@@ -38,7 +41,9 @@ app.use(
 );
 
 app.get("/api/persons", (request, response) => {
-  response.status(200).json(persons);
+  Person.find({}).then((persons) => {
+    response.status(200).json(persons);
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
