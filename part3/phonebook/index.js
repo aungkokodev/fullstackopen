@@ -70,22 +70,20 @@ app.post("/api/persons", (request, response) => {
       error: "missing name or number",
     });
 
-  const isExist = persons.find((p) => p.name === body.name);
-  if (isExist)
-    return response.status(400).json({
-      error: "name must be unique",
-    });
+  // const isExist = persons.find((p) => p.name === body.name);
+  // if (isExist)
+  //   return response.status(400).json({
+  //     error: "name must be unique",
+  //   });
 
-  const id = String(Math.floor(Math.random() * 1000000));
-  const person = {
-    id: id,
+  const person = new Person({
     name: body.name,
     number: body.number,
-  };
+  });
 
-  persons = persons.concat(person);
-
-  response.status(201).json(person);
+  person.save().then((person) => {
+    response.status(201).json(person);
+  });
 });
 
 app.delete("/api/persons/:id", (request, response) => {
