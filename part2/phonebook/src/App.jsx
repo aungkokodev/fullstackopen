@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
@@ -12,6 +12,7 @@ const App = () => {
   const [filter, setFilter] = useState("");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(false);
+  const timeoutId = useRef();
 
   /* */
   const handleNameChange = (e) => {
@@ -29,11 +30,20 @@ const App = () => {
   };
 
   /* */
-  const removeMessage = () => {
-    setTimeout(() => {
+  const displayMessage = (message, isError = false) => {
+    setError(isError);
+    setMessage(message);
+    clearTimeout(timeoutId.current);
+    timeoutId.current = setTimeout(() => {
       setMessage(null);
       setError(false);
     }, 5000);
+  };
+
+  /* */
+  const resetForm = () => {
+    setNewName("");
+    setNewNumber("");
   };
 
   /* */
@@ -55,29 +65,34 @@ const App = () => {
 
       if (!accept) return;
 
-      personService.update(newPerson.id, newPerson).then((data) => {
-        setPersons((prev) =>
-          prev.map((person) => (person.id !== data.id ? person : data))
-        );
-        setNewName("");
-        setNewNumber("");
-        setMessage(`Updated ${data.name}'s old number with ${data.number}`);
-        removeMessage();
-      });
+      personService
+        .update(newPerson.id, newPerson)
+        .then((data) => {
+          setPersons((prev) =>
+            prev.map((person) => (person.id !== data.id ? person : data))
+          );
+          resetForm();
+          displayMessage(
+            `Updated ${data.name}'s old number with ${data.number}`
+          );
+        })
+        .catch((error) => {
+          displayMessage(error.response.data.error, true);
+        });
 
       return;
     }
 
-    personService.create(newPerson).then((data) => {
-      setPersons((prev) => prev.concat(data));
-      setNewName("");
-      setNewNumber("");
-      setMessage(`Added ${data.name}`);
-      removeMessage();
-    });
-
-    setNewName("");
-    setNewNumber("");
+    personService
+      .create(newPerson)
+      .then((data) => {
+        setPersons((prev) => prev.concat(data));
+        resetForm();
+        displayMessage(`Added ${data.name}`);
+      })
+      .catch((error) => {
+        displayMessage(error.response.data.error, true);
+      });
   };
 
   /* */
@@ -88,15 +103,15 @@ const App = () => {
 
     personService
       .remove(person.id)
-      .then((data) =>
-        setPersons((prev) => prev.filter((person) => person.id !== data.id))
-      )
+      .then(() => {
+        displayMessage(`Deleted ${person.name}`);
+        setPersons((prev) => prev.filter((p) => p.id !== person.id));
+      })
       .catch(() => {
-        setError(true);
-        setMessage(
-          `Information of ${person.name} has already been removed from server`
+        displayMessage(
+          `Information of ${person.name} has already been removed from server`,
+          true
         );
-        removeMessage();
         setPersons((prev) => prev.filter((p) => p.id !== person.id));
       });
   };
