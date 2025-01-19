@@ -12,3 +12,5 @@
   - [courseinfo](https://github.com/aungkokodev/fullstackopen/tree/main/part2/courseinfo)
   - [phonebook](https://github.com/aungkokodev/fullstackopen/tree/main/part2/phonebook)
   - [countries](https://github.com/aungkokodev/fullstackopen/tree/main/part2/countries)
+- [Part 3](https://github.com/aungkokodev/fullstackopen/tree/main/part3)
+  - [phonebook](https://github.com/aungkokodev/fullstackopen/tree/main/part3/phonebook)
