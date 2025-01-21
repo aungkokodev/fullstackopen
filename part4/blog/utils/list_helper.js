@@ -18,4 +18,20 @@ const favoriteBlog = (blogs) => {
   return { title: blog.title, author: blog.author, likes: blog.likes }
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog }
+const mostBlog = (blogs) => {
+  if (blogs.length === 0) return null
+
+  const obj = blogs.reduce((set, blog) => {
+    if (blog.author in set) set[blog.author] += 1
+    else set[blog.author] = 1
+    return set
+  }, {})
+
+  const [author, count] = Object.entries(obj).reduce((a, c) =>
+    a[1] > c[1] ? a : c
+  )
+
+  return { author, blogs: count }
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlog }
