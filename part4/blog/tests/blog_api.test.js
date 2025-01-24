@@ -54,6 +54,17 @@ test('successfully creates a new blog post', async () => {
   assert.deepStrictEqual(savedBlog.body, newBlog)
 })
 
+test('if the likes property is missing from the request, it will default to the value 0', async () => {
+  const newBlog = {
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+  }
+
+  const savedBlog = await api.post('/api/blogs').send(newBlog)
+  assert.strictEqual(savedBlog.body.likes, 0)
+})
+
 after(async () => {
   mongoose.connection.close()
 })
