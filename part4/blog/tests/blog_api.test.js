@@ -33,6 +33,27 @@ test('the unique identifier property of the blog posts is named id', async () =>
   assert(result)
 })
 
+test('successfully creates a new blog post', async () => {
+  const newBlog = {
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+    likes: 7,
+  }
+
+  const savedBlog = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+  delete savedBlog.body.id
+  assert.deepStrictEqual(savedBlog.body, newBlog)
+})
+
 after(async () => {
   mongoose.connection.close()
 })
