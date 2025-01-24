@@ -54,7 +54,7 @@ test('successfully creates a new blog post', async () => {
   assert.deepStrictEqual(savedBlog.body, newBlog)
 })
 
-test('if the likes property is missing from the request, it will default to the value 0', async () => {
+test('if the likes property is missing, it will default to the value 0', async () => {
   const newBlog = {
     title: 'React patterns',
     author: 'Michael Chan',
@@ -65,7 +65,7 @@ test('if the likes property is missing from the request, it will default to the 
   assert.strictEqual(savedBlog.body.likes, 0)
 })
 
-test('if the title or url properties are missing from the request data, the backend responds to the request with the status code 400', async () => {
+test('if the title or url properties are missing, responds with the status code 400', async () => {
   const blogWithMissingTitle = {
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
@@ -80,6 +80,16 @@ test('if the title or url properties are missing from the request data, the back
 
   await api.post('/api/blogs').send(blogWithMissingTitle).expect(400)
   await api.post('/api/blogs').send(blogWithMissingUrl).expect(400)
+})
+
+test('blog with valid id can be deleted', async () => {
+  const blogToDelete = helper.initialBlogs[0]
+  blogToDelete.id = blogToDelete._id
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert(blogsAtEnd.every((blog) => blog.id !== blogToDelete.id))
 })
 
 after(async () => {
