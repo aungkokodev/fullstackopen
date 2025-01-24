@@ -65,6 +65,23 @@ test('if the likes property is missing from the request, it will default to the 
   assert.strictEqual(savedBlog.body.likes, 0)
 })
 
+test('if the title or url properties are missing from the request data, the backend responds to the request with the status code 400', async () => {
+  const blogWithMissingTitle = {
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+    likes: 7,
+  }
+
+  const blogWithMissingUrl = {
+    title: 'React patterns',
+    author: 'Michael Chan',
+    likes: 7,
+  }
+
+  await api.post('/api/blogs').send(blogWithMissingTitle).expect(400)
+  await api.post('/api/blogs').send(blogWithMissingUrl).expect(400)
+})
+
 after(async () => {
   mongoose.connection.close()
 })
