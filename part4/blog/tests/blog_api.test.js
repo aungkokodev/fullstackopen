@@ -83,13 +83,35 @@ test('if the title or url properties are missing, responds with the status code 
 })
 
 test('blog with valid id can be deleted', async () => {
-  const blogToDelete = helper.initialBlogs[0]
-  blogToDelete.id = blogToDelete._id
+  const blogToDelete = {
+    id: '5a422a851b54a676234d17f7',
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+    likes: 7,
+  }
 
   await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
   assert(blogsAtEnd.every((blog) => blog.id !== blogToDelete.id))
+})
+
+test('blog post can be updated', async () => {
+  const blogToUpdate = {
+    id: '5a422a851b54a676234d17f7',
+    title: 'React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+    likes: 35,
+  }
+
+  const updatedBlog = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(blogToUpdate)
+    .expect(200)
+
+  assert.deepStrictEqual(updatedBlog.body, blogToUpdate)
 })
 
 after(async () => {
