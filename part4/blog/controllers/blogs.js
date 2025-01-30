@@ -18,10 +18,11 @@ blogRouter.post('/', async (request, response) => {
   if (!body.title || !body.url)
     return response.status(400).send({ error: 'missing title or url' })
 
-  const token = jwt.verify(request.token, process.env.SECRET)
-  if (!token.id) return request.status(400).json({ error: 'token invalid' })
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!decodedToken.id)
+    return request.status(401).json({ error: 'token invalid' })
 
-  const user = await User.findById(token.id)
+  const user = await User.findById(decodedToken.id)
 
   const blog = {
     title: body.title,
@@ -42,6 +43,14 @@ blogRouter.post('/', async (request, response) => {
 })
 
 blogRouter.delete('/:id', async (request, response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!decodedToken.id)
+    return response.status(401).json({ error: 'token invalid' })
+
+  const blog = await Blog.findById(request.params.id)
+  if (blog.user.toString() !== decodedToken.id)
+    return response.status(401).json({ error: 'user unauthorized' })
+
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
