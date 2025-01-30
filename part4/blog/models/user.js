@@ -9,12 +9,12 @@ const userSchema = new mongoose.Schema({
   },
   passwordHash: String,
   name: String,
+  blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],
 })
 
 userSchema.set('toJSON', {
   transform: (docuemnt, returnedObject) => {
     returnedObject.id = returnedObject._id
-
     delete returnedObject._id
     delete returnedObject.__v
     delete returnedObject.passwordHash
