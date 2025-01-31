@@ -14,3 +14,5 @@
   - [countries](https://github.com/aungkokodev/fullstackopen/tree/main/part2/countries)
 - [Part 3](https://github.com/aungkokodev/fullstackopen/tree/main/part3)
   - [phonebook](https://github.com/aungkokodev/fullstackopen/tree/main/part3/phonebook)
+- [Part 4](https://github.com/aungkokodev/fullstackopen/tree/main/part4)
+  - [blog](https://github.com/aungkokodev/fullstackopen/tree/main/part4/blog)
