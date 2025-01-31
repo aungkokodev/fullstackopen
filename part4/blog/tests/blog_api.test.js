@@ -1,4 +1,4 @@
-const { test, beforeEach, after, describe } = require('node:test')
+const { test, after, describe, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -12,13 +12,20 @@ const api = supertest(app)
 describe('blog api', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
+    await User.deleteMany({})
 
     for (let blog of helper.initialBlogs) {
-      let blogObject = new Blog(blog)
-      await blogObject.save()
+      const blogObj = new Blog(blog)
+      await blogObj.save()
+    }
+
+    for (let user of helper.initialUsers) {
+      const userObj = new User(user)
+      await userObj.save()
     }
   })
 
+  /* */
   test('there are six blogs', async () => {
     const blogs = await api
       .get('/api/blogs')
@@ -28,6 +35,7 @@ describe('blog api', () => {
     assert.strictEqual(blogs.body.length, helper.initialBlogs.length)
   })
 
+  /* */
   test('the unique identifier property of the blog posts is named id', async () => {
     const blogs = await api.get('/api/blogs')
 
@@ -35,16 +43,35 @@ describe('blog api', () => {
     assert(result)
   })
 
-  test('successfully creates a new blog post', async () => {
-    const newBlog = {
-      title: 'React patterns',
-      author: 'Michael Chan',
+  /* */
+  test('request fail if token is not provided', async () => {
+    const blog = {
+      title: 'Node api testing',
+      author: 'Steve',
       url: 'https://reactpatterns.com/',
       likes: 7,
     }
 
-    const savedBlog = await api
+    await api.post('/api/blogs').send(blog).expect(401)
+    await api.delete(`/api/blogs/${blog._id}`).expect(401)
+  })
+
+  /* */
+  test('new blog post can be created', async () => {
+    const newBlog = {
+      title: 'Node api testing',
+      author: 'Steve',
+      url: 'https://reactpatterns.com/',
+      likes: 7,
+    }
+
+    const { body } = await api
+      .post('/api/login')
+      .send({ username: 'steve', password: 'steve' })
+
+    await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${body.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -52,10 +79,11 @@ describe('blog api', () => {
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
-    delete savedBlog.body.id
-    assert.deepStrictEqual(savedBlog.body, newBlog)
+    const titles = blogsAtEnd.map((blog) => blog.title)
+    assert(titles.includes(newBlog.title))
   })
 
+  /* */
   test('if the likes property is missing, it will default to the value 0', async () => {
     const newBlog = {
       title: 'React patterns',
@@ -63,11 +91,19 @@ describe('blog api', () => {
       url: 'https://reactpatterns.com/',
     }
 
-    const savedBlog = await api.post('/api/blogs').send(newBlog)
+    const { body } = await api
+      .post('/api/login')
+      .send({ username: 'steve', password: 'steve' })
+
+    const savedBlog = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${body.token}`)
+      .send(newBlog)
     assert.strictEqual(savedBlog.body.likes, 0)
   })
 
-  test('if the title or url properties are missing, responds with the status code 400', async () => {
+  /* */
+  test('if the title or url are missing, responds with the stauts code 400', async () => {
     const blogWithMissingTitle = {
       author: 'Michael Chan',
       url: 'https://reactpatterns.com/',
@@ -80,40 +116,52 @@ describe('blog api', () => {
       likes: 7,
     }
 
-    await api.post('/api/blogs').send(blogWithMissingTitle).expect(400)
-    await api.post('/api/blogs').send(blogWithMissingUrl).expect(400)
+    const { body } = await api
+      .post('/api/login')
+      .send({ username: 'steve', password: 'steve' })
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${body.token}`)
+      .send(blogWithMissingTitle)
+      .expect(400)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${body.token}`)
+      .send(blogWithMissingUrl)
+      .expect(400)
   })
 
-  test('blog with valid id can be deleted', async () => {
-    const blogToDelete = {
-      id: '5a422a851b54a676234d17f7',
-      title: 'React patterns',
-      author: 'Michael Chan',
-      url: 'https://reactpatterns.com/',
-      likes: 7,
-    }
+  /* */
+  test('blog post can be deleted', async () => {
+    const blogToDelete = helper.initialBlogs[0]
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+    const { body } = await api
+      .post('/api/login')
+      .send({ username: 'steve', password: 'steve' })
+
+    await api
+      .delete(`/api/blogs/${blogToDelete._id}`)
+      .set('Authorization', `Bearer ${body.token}`)
+      .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
     assert(blogsAtEnd.every((blog) => blog.id !== blogToDelete.id))
   })
 
+  /* */
   test('blog post can be updated', async () => {
-    const blogToUpdate = {
-      id: '5a422a851b54a676234d17f7',
-      title: 'React patterns',
-      author: 'Michael Chan',
-      url: 'https://reactpatterns.com/',
-      likes: 35,
-    }
+    const blogToUpdate = { ...helper.initialBlogs[0] }
+    blogToUpdate.title = 'Updated blog title'
 
-    const updatedBlog = await api
-      .put(`/api/blogs/${blogToUpdate.id}`)
+    await api
+      .put(`/api/blogs/${blogToUpdate._id}`)
       .send(blogToUpdate)
       .expect(200)
 
-    assert.deepStrictEqual(updatedBlog.body, blogToUpdate)
+    const blogsAtEnd = await helper.blogsInDb()
+    const titles = blogsAtEnd.map((blog) => blog.title)
+    assert(titles.includes(blogToUpdate.title))
   })
 })
 
@@ -126,11 +174,11 @@ describe('user api', () => {
     await Promise.all(promiseArray)
   })
 
-  test('valid user can be created', async () => {
+  test('new user can be created', async () => {
     const user = {
-      username: 'steve',
-      password: 'steve',
-      name: 'Steve',
+      username: 'rose',
+      password: 'rose',
+      name: 'Rose',
     }
 
     await api
@@ -148,9 +196,9 @@ describe('user api', () => {
 
   test('username must be unique', async () => {
     const user = {
-      username: 'rose',
-      password: 'rose',
-      name: 'Rose',
+      username: 'steve',
+      password: 'steve',
+      name: 'Steve',
     }
 
     await api.post('/api/users').send(user).expect(400)
