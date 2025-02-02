@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blog'
 import loginService from './services/login'
+import Notification from './components/Notificatioin'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,15 +12,26 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useState('')
+  const [isError, setIsError] = useState(false)
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    const user = await loginService.login({ username, password })
-    window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-    blogService.setToken(user.token)
-    setUser(user)
-    setUsername('')
-    setPassword('')
+    try {
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
+      setUsername('')
+      setPassword('')
+    } catch (error) {
+      setMessage(error.response.data.error)
+      setIsError(true)
+      setTimeout(() => {
+        setMessage('')
+        setIsError(false)
+      }, 5000)
+    }
   }
 
   const handleLogout = () => {
@@ -30,11 +42,24 @@ const App = () => {
 
   const createBlog = async (event) => {
     event.preventDefault()
-    const newBlog = await blogService.create({ title, author, url })
-    setBlogs((b) => b.concat(newBlog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    try {
+      const newBlog = await blogService.create({ title, author, url })
+      setBlogs((b) => b.concat(newBlog))
+      setMessage(`a new blog ${title} by ${author} added`)
+      setTimeout(() => {
+        setMessage('')
+      }, 5000)
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    } catch (error) {
+      setMessage(error.response.data.error)
+      setIsError(true)
+      setTimeout(() => {
+        setMessage('')
+        setIsError(false)
+      }, 5000)
+    }
   }
 
   useEffect(() => {
@@ -53,6 +78,10 @@ const App = () => {
     return (
       <div>
         <h1>log in to application</h1>
+        <Notification
+          message={message}
+          isError={isError}
+        />
         <form onSubmit={handleLogin}>
           <div>
             <label>username </label>
@@ -78,6 +107,10 @@ const App = () => {
   return (
     <div>
       <h1>blogs</h1>
+      <Notification
+        message={message}
+        isError={isError}
+      />
       <div>
         {user.name} logged in{' '}
         <button
