@@ -4,15 +4,13 @@ import blogService from './services/blog'
 import loginService from './services/login'
 import Notification from './components/Notificatioin'
 import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [message, setMessage] = useState('')
   const [isError, setIsError] = useState(false)
 
@@ -43,19 +41,15 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = async (event) => {
-    event.preventDefault()
+  const createBlog = async (blog) => {
     try {
-      const newBlog = await blogService.create({ title, author, url })
+      const newBlog = await blogService.create(blog)
       setBlogs((b) => b.concat(newBlog))
-      setMessage(`a new blog ${title} by ${author} added`)
+      setMessage(`a new blog ${blog.title} by ${blog.author} added`)
       setTimeout(() => {
         setMessage('')
       }, 5000)
       blogFormRef.current.toggleVisibility()
-      setTitle('')
-      setAuthor('')
-      setUrl('')
     } catch (error) {
       setMessage(error.response.data.error)
       setIsError(true)
@@ -129,34 +123,7 @@ const App = () => {
         buttonLabel="create new blog"
         ref={blogFormRef}
       >
-        <form onSubmit={createBlog}>
-          <h1>create new</h1>
-          <div>
-            <label>title:</label>
-            <input
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-          <div>
-            <label>author:</label>
-            <input
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-          <div>
-            <label>url:</label>
-            <input
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-          <button type="submit">create</button>
-        </form>
+        <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map((blog) => (
         <Blog
