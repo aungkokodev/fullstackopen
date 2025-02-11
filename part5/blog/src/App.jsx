@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blog'
-import loginService from './services/login'
+import BlogForm from './components/BlogForm'
 import Notification from './components/Notificatioin'
 import Togglable from './components/Togglable'
-import BlogForm from './components/BlogForm'
+import blogService from './services/blog'
+import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -16,6 +16,15 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const displayNotification = (msg, err = false) => {
+    setMessage(msg)
+    setIsError(err)
+    setTimeout(() => {
+      setMessage('')
+      setIsError(false)
+    }, 5000)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -26,12 +35,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (error) {
-      setMessage(error.response.data.error)
-      setIsError(true)
-      setTimeout(() => {
-        setMessage('')
-        setIsError(false)
-      }, 5000)
+      displayNotification(error.response.data.error, true)
     }
   }
 
@@ -45,32 +49,39 @@ const App = () => {
     try {
       const newBlog = await blogService.create(blog)
       setBlogs((b) => b.concat(newBlog))
-      setMessage(`a new blog ${blog.title} by ${blog.author} added`)
-      setTimeout(() => {
-        setMessage('')
-      }, 5000)
       blogFormRef.current.toggleVisibility()
+      displayNotification(`a new blog ${blog.title} by ${blog.author} added`)
     } catch (error) {
-      setMessage(error.response.data.error)
-      setIsError(true)
-      setTimeout(() => {
-        setMessage('')
-        setIsError(false)
-      }, 5000)
+      displayNotification(error.response.data.error, true)
     }
   }
 
   const updateBlog = async (blog) => {
-    const newBlog = await blogService.update(blog)
-    const newBlogList = blogs.map((b) => (b.id === blog.id ? newBlog : b))
-    setBlogs(newBlogList)
+    try {
+      const newBlog = await blogService.update(blog)
+      const newBlogList = blogs.map((b) => (b.id === blog.id ? newBlog : b))
+      setBlogs(newBlogList)
+    } catch (error) {
+      displayNotification(error.response.data.error, true)
+    }
+  }
+
+  const deleteBlog = async (blog) => {
+    try {
+      await blogService.remove(blog.id)
+      const newBlogList = blogs.filter((b) => b.id !== blog.id)
+      setBlogs(newBlogList)
+      displayNotification(
+        `Successfully deleted ${blog.title} by ${blog.author}`
+      )
+    } catch (error) {
+      displayNotification(error.response.data.error, true)
+    }
   }
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
 
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -138,6 +149,8 @@ const App = () => {
           blog={blog}
           key={blog.id}
           updateBlog={updateBlog}
+          deleteBlog={deleteBlog}
+          canDelete={user.username === blog.user.username}
         />
       ))}
     </div>
