@@ -60,6 +60,12 @@ const App = () => {
     }
   }
 
+  const updateBlog = async (blog) => {
+    const newBlog = await blogService.update(blog)
+    const newBlogList = blogs.map((b) => (b.id === blog.id ? newBlog : b))
+    setBlogs(newBlogList)
+  }
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
@@ -129,6 +135,7 @@ const App = () => {
         <Blog
           blog={blog}
           key={blog.id}
+          updateBlog={updateBlog}
         />
       ))}
     </div>
