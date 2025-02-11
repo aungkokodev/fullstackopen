@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blog'
 import loginService from './services/login'
 import Notification from './components/Notificatioin'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,6 +15,8 @@ const App = () => {
   const [url, setUrl] = useState('')
   const [message, setMessage] = useState('')
   const [isError, setIsError] = useState(false)
+
+  const blogFormRef = useRef()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -49,6 +52,7 @@ const App = () => {
       setTimeout(() => {
         setMessage('')
       }, 5000)
+      blogFormRef.current.toggleVisibility()
       setTitle('')
       setAuthor('')
       setUrl('')
@@ -70,6 +74,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      blogService.setToken(user.token)
       setUser(user)
     }
   }, [])
@@ -120,34 +125,39 @@ const App = () => {
           logout
         </button>
       </div>
-      <form onSubmit={createBlog}>
-        <h1>create new</h1>
-        <div>
-          <label>title:</label>
-          <input
-            type="text"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          <label>author:</label>
-          <input
-            type="text"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          <label>url:</label>
-          <input
-            type="text"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
+      <Togglable
+        buttonLabel="create new blog"
+        ref={blogFormRef}
+      >
+        <form onSubmit={createBlog}>
+          <h1>create new</h1>
+          <div>
+            <label>title:</label>
+            <input
+              type="text"
+              value={title}
+              onChange={({ target }) => setTitle(target.value)}
+            />
+          </div>
+          <div>
+            <label>author:</label>
+            <input
+              type="text"
+              value={author}
+              onChange={({ target }) => setAuthor(target.value)}
+            />
+          </div>
+          <div>
+            <label>url:</label>
+            <input
+              type="text"
+              value={url}
+              onChange={({ target }) => setUrl(target.value)}
+            />
+          </div>
+          <button type="submit">create</button>
+        </form>
+      </Togglable>
       {blogs.map((blog) => (
         <Blog
           blog={blog}
