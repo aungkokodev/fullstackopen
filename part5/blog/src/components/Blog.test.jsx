@@ -1,8 +1,9 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, test } from 'vitest'
 import Blog from './Blog'
 
-describe('<Blog /> Component', () => {
+describe('<Blog />', () => {
   let container
 
   const blog = {
@@ -31,5 +32,15 @@ describe('<Blog /> Component', () => {
 
     const blogDetails = container.querySelector('.blog-details')
     expect(blogDetails).toHaveStyle({ display: 'none' })
+  })
+
+  test('the URL and likes are shown when the view button is clicked', async () => {
+    const user = userEvent.setup()
+
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+
+    const blogDetails = container.querySelector('.blog-details')
+    expect(blogDetails).not.toHaveStyle({ display: 'none' })
   })
 })
