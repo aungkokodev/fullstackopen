@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -23,6 +23,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={title}
           onChange={({ target }) => setTitle(target.value)}
+          id="blog-title-input"
         />
       </div>
       <div>
@@ -31,6 +32,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={author}
           onChange={({ target }) => setAuthor(target.value)}
+          id="blog-author-input"
         />
       </div>
       <div>
@@ -39,6 +41,7 @@ const BlogForm = ({ createBlog }) => {
           type="text"
           value={url}
           onChange={({ target }) => setUrl(target.value)}
+          id="blog-url-input"
         />
       </div>
       <button type="submit">create</button>
