@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import Blog from './Blog'
 
 describe('<Blog />', () => {
   let container
+  let mockHandler
 
   const blog = {
     id: '67a87ddcd2f30f57f74795b9',
@@ -20,7 +21,13 @@ describe('<Blog />', () => {
   }
 
   beforeEach(() => {
-    container = render(<Blog blog={blog} />).container
+    mockHandler = vi.fn()
+    container = render(
+      <Blog
+        blog={blog}
+        updateBlog={mockHandler}
+      />
+    ).container
   })
 
   test('renders the title and author, but not URL or likes', async () => {
@@ -42,5 +49,15 @@ describe('<Blog />', () => {
 
     const blogDetails = container.querySelector('.blog-details')
     expect(blogDetails).not.toHaveStyle({ display: 'none' })
+  })
+
+  test('if the like button is clicked twice, the event handler is called twice', async () => {
+    const user = userEvent.setup()
+
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
