@@ -44,20 +44,33 @@ describe('Blog app', () => {
   })
 
   describe('When logged in', () => {
+    const title = 'Getting Started with JavaScript'
+    const author = 'Jane Doe'
+    const url = 'http://example.com/blogs/123'
+
     beforeEach(async ({ page }) => {
       await loginWith(page, 'steve', 'secret')
     })
 
     test('a new blog can be created', async ({ page }) => {
-      const title = 'Getting Started with JavaScript'
-      const author = 'Jane Doe'
-      const url = 'http://example.com/blogs/123'
-
       await createBlog(page, title, author, url)
 
       await expect(page.getByText(`a new blog ${title} by ${author} added`)).toBeVisible()
       await expect(page.getByText(`${title} ${author}`)).toBeVisible()
       await expect(page.getByRole('button', { name: 'view' })).toBeVisible()
+    })
+
+    describe('and a blog exists', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, title, author, url)
+      })
+
+      test('blog can be liked', async ({ page }) => {
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByText('likes 0')).toBeVisible()
+        await page.getByRole('button', { name: 'like' }).click()
+        await expect(page.getByText('likes 1')).toBeVisible()
+      })
     })
   })
 })
