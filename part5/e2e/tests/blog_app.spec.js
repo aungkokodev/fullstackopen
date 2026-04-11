@@ -1,4 +1,5 @@
 const { test, expect, describe, beforeEach } = require('@playwright/test')
+const { loginWith, createBlog } = require('./blog_helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -25,25 +26,38 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.locator('input[type=text]').fill('steve')
-      await page.locator('input[type=password]').fill('secret')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'steve', 'secret')
 
       await expect(page.getByText('Steve logged in')).toBeVisible()
       await expect(page.getByRole('button', { name: 'logout' })).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await page.locator('input[type=text]').fill('steve')
-      await page.locator('input[type=password]').fill('wrong')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'steve', 'password')
 
       const noti = page.locator('.error')
-
       await expect(noti).toContainText('incorrect username or password')
       await expect(noti).toHaveCSS('border-style', 'solid')
       await expect(noti).toHaveCSS('color', 'rgb(255, 0, 0)')
       await expect(page.getByText('Steve logged in')).not.toBeVisible()
+    })
+  })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'steve', 'secret')
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      const title = 'Getting Started with JavaScript'
+      const author = 'Jane Doe'
+      const url = 'http://example.com/blogs/123'
+
+      await createBlog(page, title, author, url)
+
+      await expect(page.getByText(`a new blog ${title} by ${author} added`)).toBeVisible()
+      await expect(page.getByText(`${title} ${author}`)).toBeVisible()
+      await expect(page.getByRole('button', { name: 'view' })).toBeVisible()
     })
   })
 })
