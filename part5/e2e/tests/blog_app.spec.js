@@ -87,6 +87,25 @@ describe('Blog app', () => {
         await expect(page.locator('.blog')).toHaveCount(0)
         await expect(page.getByText(`${title} ${author}`)).not.toBeVisible()
       })
+
+      test('only owner sees delete button', async ({ page, request }) => {
+        await request.post('/api/users', {
+          data: {
+            name: 'John',
+            username: 'john',
+            password: 'secret',
+          },
+        })
+
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByRole('button', { name: 'delete' })).toBeVisible()
+
+        await page.getByRole('button', { name: 'logout' }).click()
+        await loginWith(page, 'john', 'secret')
+
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
+      })
     })
   })
 })
