@@ -1,15 +1,11 @@
 const { test, expect, describe, beforeEach } = require('@playwright/test')
-const { loginWith, createBlog } = require('./blog_helper')
+const { loginWith, createBlog, blogs, users, incrementBlogLikes } = require('./blog_helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await request.post('/api/testing/reset')
     await request.post('/api/users', {
-      data: {
-        name: 'Steve',
-        username: 'steve',
-        password: 'secret',
-      },
+      data: users[0],
     })
 
     await page.goto('/')
@@ -26,30 +22,28 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await loginWith(page, 'steve', 'secret')
+      await loginWith(page, users[0].username, users[0].password)
 
-      await expect(page.getByText('Steve logged in')).toBeVisible()
+      await expect(page.getByText(`${users[0].name} logged in`)).toBeVisible()
       await expect(page.getByRole('button', { name: 'logout' })).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await loginWith(page, 'steve', 'password')
+      await loginWith(page, 'user', 'password')
 
       const noti = page.locator('.error')
       await expect(noti).toContainText('incorrect username or password')
       await expect(noti).toHaveCSS('border-style', 'solid')
       await expect(noti).toHaveCSS('color', 'rgb(255, 0, 0)')
-      await expect(page.getByText('Steve logged in')).not.toBeVisible()
+      await expect(page.getByText(`${users[0].name} logged in`)).not.toBeVisible()
     })
   })
 
   describe('When logged in', () => {
-    const title = 'Getting Started with JavaScript'
-    const author = 'Jane Doe'
-    const url = 'http://example.com/blogs/123'
+    const { title, author, url } = blogs[0]
 
     beforeEach(async ({ page }) => {
-      await loginWith(page, 'steve', 'secret')
+      await loginWith(page, users[0].username, users[0].password)
     })
 
     test('a new blog can be created', async ({ page }) => {
@@ -90,21 +84,44 @@ describe('Blog app', () => {
 
       test('only owner sees delete button', async ({ page, request }) => {
         await request.post('/api/users', {
-          data: {
-            name: 'John',
-            username: 'john',
-            password: 'secret',
-          },
+          data: users[1],
         })
 
         await page.getByRole('button', { name: 'view' }).click()
         await expect(page.getByRole('button', { name: 'delete' })).toBeVisible()
 
         await page.getByRole('button', { name: 'logout' }).click()
-        await loginWith(page, 'john', 'secret')
+        await loginWith(page, users[1].username, users[1].password)
 
         await page.getByRole('button', { name: 'view' }).click()
         await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
+      })
+    })
+
+    describe('and multiple blogs exists', () => {
+      beforeEach(async ({ page }) => {
+        for (const blog of blogs) {
+          await createBlog(page, blog.title, blog.author, blog.url)
+        }
+      })
+
+      test('blogs are arranged in the order according to likes', async ({ page }) => {
+        for (let blog of blogs) {
+          await incrementBlogLikes(
+            page.locator('.blog').filter({ hasText: blog.title }),
+            blog.likes,
+          )
+        }
+
+        const blogDivs = page.locator('.blog')
+        const sortedBlogs = blogs.toSorted((a, b) => b.likes - a.likes)
+
+        for (let i = 0; i < sortedBlogs.length; i++) {
+          const { title, likes } = sortedBlogs[i]
+
+          await expect(blogDivs.nth(i)).toContainText(title)
+          await expect(blogDivs.nth(i)).toContainText(`likes ${likes}`)
+        }
       })
     })
   })

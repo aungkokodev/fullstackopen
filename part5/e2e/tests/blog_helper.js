@@ -12,4 +12,45 @@ const createBlog = async (page, title, author, url) => {
   await page.getByRole('button', { name: 'create' }).click()
 }
 
-export { loginWith, createBlog }
+const incrementBlogLikes = async (blog, count) => {
+  await blog.getByRole('button', { name: 'view' }).click()
+  for (let i = 0; i < count; i++) {
+    await blog.getByRole('button', { name: 'like' }).click()
+  }
+}
+
+const users = [
+  {
+    name: 'Steve',
+    username: 'steve',
+    password: 'secret1',
+  },
+  {
+    name: 'John',
+    username: 'john',
+    password: 'secret2',
+  },
+]
+
+const blogs = [
+  {
+    title: 'Mastering JavaScript Closures',
+    author: 'Alex Morgan',
+    url: 'https://example.com/js-closures',
+    likes: 2,
+  },
+  {
+    title: 'Building Scalable APIs with Nodejs',
+    author: 'Priya Sharma',
+    url: 'https://example.com/nodejs-apis',
+    likes: 1,
+  },
+  {
+    title: 'React Performance Optimization',
+    author: 'Daniel Lee',
+    url: 'https://example.com/react-performance',
+    likes: 3,
+  },
+]
+
+export { loginWith, createBlog, incrementBlogLikes, blogs, users }
