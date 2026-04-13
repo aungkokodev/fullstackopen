@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
+import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notificatioin'
 import blogService from './services/blog'
 import loginService from './services/login'
-import Blog from './components/Blog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -44,18 +45,16 @@ const App = () => {
     }, 5000)
   }
 
-  // const blogFormRef = useRef()
-
-  // const createBlog = async (blog) => {
-  //   try {
-  //     const newBlog = await blogService.create(blog)
-  //     setBlogs((b) => b.concat(newBlog))
-  //     blogFormRef.current.toggleVisibility()
-  //     displayNotification(`a new blog ${blog.title} by ${blog.author} added`)
-  //   } catch (error) {
-  //     displayNotification(error.response.data.error, true)
-  //   }
-  // }
+  const createBlog = async (blog) => {
+    try {
+      const newBlog = await blogService.create(blog)
+      setBlogs((b) => b.concat(newBlog))
+      displayNotification(`a new blog ${blog.title} by ${blog.author} added`)
+    } catch (error) {
+      displayNotification(error.response.data.error, true)
+      throw new Error()
+    }
+  }
 
   const updateBlog = async (blog) => {
     try {
@@ -75,6 +74,7 @@ const App = () => {
       displayNotification(
         `Successfully deleted ${blog.title} by ${blog.author}`,
       )
+      navigate('/')
     } catch (error) {
       displayNotification(error.response.data.error, true)
     }
@@ -114,6 +114,11 @@ const App = () => {
         <Link to='/' style={padding}>
           blogs
         </Link>
+        {user && (
+          <Link to='/create' style={padding}>
+            new blog
+          </Link>
+        )}
         {loginLink}
       </nav>
 
@@ -131,15 +136,23 @@ const App = () => {
             />
           }
         />
-        <Route
-          path='/login'
-          element={
-            <LoginForm
-              handleLogin={handleLogin}
-              displayNotification={displayNotification}
-            />
-          }
-        />
+        {user && (
+          <Route
+            path='/create'
+            element={<BlogForm createBlog={createBlog} />}
+          />
+        )}
+        {!user && (
+          <Route
+            path='/login'
+            element={
+              <LoginForm
+                handleLogin={handleLogin}
+                displayNotification={displayNotification}
+              />
+            }
+          />
+        )}
         <Route
           path='/blogs/:id'
           element={
@@ -153,10 +166,6 @@ const App = () => {
           }
         />
       </Routes>
-
-      {/* <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-        <BlogForm createBlog={createBlog} />
-      </Togglable> */}
     </>
   )
 }
