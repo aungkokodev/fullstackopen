@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import Blog from './Blog'
+import { Link } from 'react-router-dom'
 
 const BlogList = ({ blogs, updateBlog, deleteBlog, canDelete }) => {
   const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
@@ -7,15 +7,13 @@ const BlogList = ({ blogs, updateBlog, deleteBlog, canDelete }) => {
   return (
     <>
       <h1>blogs</h1>
-      {sortedBlogs.map((blog) => (
-        <Blog
-          blog={blog}
-          key={blog.id}
-          updateBlog={updateBlog}
-          deleteBlog={deleteBlog}
-          canDelete={canDelete(blog.user.username)}
-        />
-      ))}
+      <ul>
+        {sortedBlogs.map((blog) => (
+          <li key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </li>
+        ))}
+      </ul>
     </>
   )
 }
