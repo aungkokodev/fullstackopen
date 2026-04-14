@@ -22,20 +22,24 @@ describe('<Blog />', () => {
       <Blog blog={blog} canLike={false} canDelete={false} />,
     ).container
 
-    const blogAuthorAndTitle = container.querySelector('.blog-title')
-    expect(blogAuthorAndTitle)
+    expect(container.querySelector('.blog-title'))
       .toBeDefined()
-      .toHaveTextContent(blog.author)
       .toHaveTextContent(blog.title)
 
-    const blogUrl = container.querySelector('.blog-url')
-    expect(blogUrl)
+    expect(container.querySelector('.blog-author'))
+      .toBeDefined()
+      .toHaveTextContent(blog.author)
+
+    expect(container.querySelector('.blog-url'))
       .toBeDefined()
       .toHaveAttribute('href', blog.url)
       .toHaveTextContent(blog.url)
 
-    const blogUser = container.querySelector('.blog-user')
-    expect(blogUser).toBeDefined().toHaveTextContent(blog.user.name)
+    expect(container.querySelector('.blog-user'))
+      .toBeDefined()
+      .toHaveTextContent(blog.user.name)
+
+    expect(screen.queryByText('likes')).toBeDefined()
 
     const likeButton = screen.queryByRole('button', { name: 'like' })
     expect(likeButton).not.toBeInTheDocument()

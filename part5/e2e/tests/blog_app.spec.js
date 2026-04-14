@@ -24,10 +24,16 @@ describe('Blog app', () => {
     test('fails with incorrect username and password', async ({ page }) => {
       await loginWith(page, 'username', 'password')
 
-      await expect(page.getByText(/incorrect username or password/i)).toBeVisible()
+      await expect(
+        page.getByText(/incorrect username or password/i),
+      ).toBeVisible()
       await expect(page.getByRole('button', { name: 'login' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'new blog' })).not.toBeVisible()
-      await expect(page.getByRole('button', { name: 'logout' })).not.toBeVisible()
+      await expect(
+        page.getByRole('link', { name: 'new blog' }),
+      ).not.toBeVisible()
+      await expect(
+        page.getByRole('button', { name: 'logout' }),
+      ).not.toBeVisible()
     })
   })
 
@@ -39,7 +45,14 @@ describe('Blog app', () => {
     test('logged in user can create a blog', async ({ page }) => {
       await createBlog(page, blogs[0].title, blogs[0].author, blogs[0].url)
 
-      await expect(page.getByRole('link', { name: blogs[0].title })).toBeVisible()
+      await expect(
+        page.getByText(
+          `a new blog ${blogs[0].title} by ${blogs[0].author} added`,
+        ),
+      ).toBeVisible()
+      await expect(
+        page.getByRole('link', { name: blogs[0].title }),
+      ).toBeVisible()
     })
 
     describe('and several blog exists', () => {
@@ -52,18 +65,18 @@ describe('Blog app', () => {
 
       test('logged in user can like blogs', async ({ page }) => {
         await page.getByRole('link', { name: blogs[0].title }).click()
-        await expect(page.getByText('likes 0')).toBeVisible()
+        await expect(page.getByText('0 likes')).toBeVisible()
 
         await page.getByRole('button', { name: 'like' }).click()
-        await expect(page.getByText('likes 1')).toBeVisible()
+        await expect(page.getByText('1 likes')).toBeVisible()
 
         await page.getByRole('link', { name: 'blogs' }).click()
 
         await page.getByRole('link', { name: blogs[1].title }).click()
-        await expect(page.getByText('likes 0')).toBeVisible()
+        await expect(page.getByText('0 likes')).toBeVisible()
 
         await page.getByRole('button', { name: 'like' }).click()
-        await expect(page.getByText('likes 1')).toBeVisible()
+        await expect(page.getByText('1 likes')).toBeVisible()
       })
 
       test('logged in user can delete a blog', async ({ page }) => {
@@ -72,7 +85,14 @@ describe('Blog app', () => {
         await page.getByRole('link', { name: blogs[1].title }).click()
         await page.getByRole('button', { name: 'remove' }).click()
 
-        expect(page.getByRole('link', { name: blogs[1].title })).not.toBeVisible()
+        await expect(
+          page.getByText(
+            `Successfully deleted ${blogs[1].title} by ${blogs[1].author}`,
+          ),
+        ).toBeVisible()
+        await expect(
+          page.getByRole('link', { name: blogs[1].title }),
+        ).not.toBeVisible()
       })
     })
   })
