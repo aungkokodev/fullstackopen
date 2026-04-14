@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { Container } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -71,9 +72,7 @@ const App = () => {
       await blogService.remove(blog.id)
       const newBlogList = blogs.filter((b) => b.id !== blog.id)
       setBlogs(newBlogList)
-      displayNotification(
-        `Successfully deleted ${blog.title} by ${blog.author}`,
-      )
+      displayNotification(`Successfully deleted ${blog.title} by ${blog.author}`)
       navigate('/')
     } catch (error) {
       displayNotification(error.response.data.error, true)
@@ -109,7 +108,7 @@ const App = () => {
       </Link>
 
   return (
-    <>
+    <Container>
       <nav>
         <Link to='/' style={padding}>
           blogs
@@ -136,20 +135,12 @@ const App = () => {
             />
           }
         />
-        {user && (
-          <Route
-            path='/create'
-            element={<BlogForm createBlog={createBlog} />}
-          />
-        )}
+        {user && <Route path='/create' element={<BlogForm createBlog={createBlog} />} />}
         {!user && (
           <Route
             path='/login'
             element={
-              <LoginForm
-                handleLogin={handleLogin}
-                displayNotification={displayNotification}
-              />
+              <LoginForm handleLogin={handleLogin} displayNotification={displayNotification} />
             }
           />
         )}
@@ -166,7 +157,7 @@ const App = () => {
           }
         />
       </Routes>
-    </>
+    </Container>
   )
 }
 

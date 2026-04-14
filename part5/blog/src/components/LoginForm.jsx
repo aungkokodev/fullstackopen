@@ -1,3 +1,4 @@
+import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -20,28 +21,39 @@ const LoginForm = ({ handleLogin, displayNotification }) => {
     }
   }
 
+  const style = {
+    '& .MuiInputBaseInput': {
+      padding: '0 16px',
+    },
+    marginBottom: 2,
+  }
+
   return (
     <>
       <h1>Log in to application</h1>
 
       <form onSubmit={handleSubmit}>
         <div>
-          <label>username </label>
-          <input
+          <TextField
             type='text'
+            variant='standard'
+            label='username'
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          <label>password </label>
-          <input
+          <TextField
             type='password'
+            variant='standard'
+            label='password'
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type='submit'>login</button>
+        <Button type='submit' variant='contained' sx={{ marginTop: 2 }}>
+          login
+        </Button>
       </form>
     </>
   )

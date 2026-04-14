@@ -1,3 +1,4 @@
+import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -24,35 +25,43 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1>create new</h1>
+      <h2>create new</h2>
       <div>
-        <label>title:</label>
-        <input
+        <TextField
           type='text'
+          label='title'
           value={title}
           onChange={({ target }) => setTitle(target.value)}
           id='blog-title-input'
+          size='small'
+          sx={{ marginBottom: 2 }}
         />
       </div>
       <div>
-        <label>author:</label>
-        <input
+        <TextField
           type='text'
+          label='author'
           value={author}
           onChange={({ target }) => setAuthor(target.value)}
           id='blog-author-input'
+          size='small'
+          sx={{ marginBottom: 2 }}
         />
       </div>
       <div>
-        <label>url:</label>
-        <input
+        <TextField
           type='text'
+          label='url'
           value={url}
           onChange={({ target }) => setUrl(target.value)}
           id='blog-url-input'
+          size='small'
+          sx={{ marginBottom: 2 }}
         />
       </div>
-      <button type='submit'>create</button>
+      <Button type='submit' variant='contained'>
+        create
+      </Button>
     </form>
   )
 }
