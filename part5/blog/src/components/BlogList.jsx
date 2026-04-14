@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-const BlogList = ({ blogs, updateBlog, deleteBlog, canDelete }) => {
+const BlogList = ({ blogs }) => {
   const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
   return (
@@ -22,7 +22,4 @@ export default BlogList
 
 BlogList.propTypes = {
   blogs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  updateBlog: PropTypes.func,
-  deleteBlog: PropTypes.func,
-  canDelete: PropTypes.func,
 }

@@ -21,16 +21,9 @@ const LoginForm = ({ handleLogin, displayNotification }) => {
     }
   }
 
-  const style = {
-    '& .MuiInputBaseInput': {
-      padding: '0 16px',
-    },
-    marginBottom: 2,
-  }
-
   return (
     <>
-      <h1>Log in to application</h1>
+      <h2>Log in to application</h2>
 
       <form onSubmit={handleSubmit}>
         <div>

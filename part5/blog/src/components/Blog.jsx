@@ -22,16 +22,15 @@ const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
 
   return (
     <div className='blog'>
-      <h1 className='blog-title'>
+      <h2 className='blog-title'>
         {blog.author}: {blog.title}
-      </h1>
+      </h2>
       <div className='blog-details'>
         <a className='blog-url' href={blog.url}>
           {blog.url}
         </a>
         <div className='blog-likes'>
-          likes {blog.likes}{' '}
-          {canLike && <button onClick={handleBlogUpdate}>like</button>}
+          likes {blog.likes} {canLike && <button onClick={handleBlogUpdate}>like</button>}
         </div>
         <div className='blog-user'>Added by {blog.user.name}</div>
         {canDelete && <button onClick={handleBlogDelete}>remove</button>}

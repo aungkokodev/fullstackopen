@@ -1,4 +1,4 @@
-import { Container } from '@mui/material'
+import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
 import Blog from './components/Blog'
@@ -34,7 +34,9 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.setToken(null)
     setUser(null)
+    console.log('before')
     navigate('/')
+    console.log('after')
   }
 
   const displayNotification = (msg, err = false) => {
@@ -95,31 +97,36 @@ const App = () => {
     return true
   }
 
-  const padding = {
-    padding: 8,
-  }
-
-  const loginLink =
-    user ?
-      <button onClick={handleLogout}>logout</button>
-      // eslint-disable-next-line indent
-    : <Link to='/login' style={padding}>
-        login
-      </Link>
-
   return (
     <Container>
-      <nav>
-        <Link to='/' style={padding}>
-          blogs
-        </Link>
-        {user && (
-          <Link to='/create' style={padding}>
-            new blog
-          </Link>
-        )}
-        {loginLink}
-      </nav>
+      <AppBar position='static'>
+        <Toolbar>
+          <Typography component={'h1'} sx={{ flexGrow: 1 }}>
+            Blog App
+          </Typography>
+          <nav>
+            <Button color='inherit' component={Link} to='/'>
+              blogs
+            </Button>
+            {user && (
+              <Button color='inherit' component={Link} to='/create' nativeButton={false}>
+                new blog
+              </Button>
+            )}
+            {
+              user ?
+                <Button color='inherit' onClick={handleLogout}>
+                  logout
+                </Button>
+                // eslint-disable-next-line indent
+              : <Button color='inherit' component={Link} to='/login'>
+                  login
+                </Button>
+
+            }
+          </nav>
+        </Toolbar>
+      </AppBar>
 
       <Notification message={message} isError={isError} />
 
