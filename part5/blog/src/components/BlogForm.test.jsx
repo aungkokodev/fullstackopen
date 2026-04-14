@@ -11,6 +11,14 @@ describe('<BlogForm />', () => {
       url: 'https://css-tricks.com/snippets/css/complete-guide-grid/',
     }
 
+    vi.mock('react-router-dom', async () => {
+      const actual = await vi.importActual('react-router-dom')
+      return {
+        ...actual,
+        useNavigate: () => vi.fn(),
+      }
+    })
+
     const mockHandler = vi.fn()
 
     const { container } = render(<BlogForm createBlog={mockHandler} />)
