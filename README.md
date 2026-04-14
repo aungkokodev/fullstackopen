@@ -16,3 +16,6 @@
   - [phonebook](https://github.com/aungkokodev/fullstackopen/tree/main/part3/phonebook)
 - [Part 4](https://github.com/aungkokodev/fullstackopen/tree/main/part4)
   - [blog](https://github.com/aungkokodev/fullstackopen/tree/main/part4/blog)
+- [Part 5](https://github.com/aungkokodev/fullstackopen/tree/main/part5)
+  - [blog](https://github.com/aungkokodev/fullstackopen/tree/main/part5/blog)
+  - [e2e](https://github.com/aungkokodev/fullstackopen/tree/main/part5/e2e)
