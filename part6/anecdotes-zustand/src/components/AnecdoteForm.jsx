@@ -5,7 +5,6 @@ const AnecdoteForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log('submit', event.target.content.value)
     add(event.target.content.value)
     event.target.reset()
   }
