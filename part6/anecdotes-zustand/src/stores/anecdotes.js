@@ -14,6 +14,12 @@ const useAnecdoteStore = create((set, get) => ({
       const anecdotes = await anecdoteServices.getAll()
       set(() => ({ anecdotes }))
     },
+    add: async (content) => {
+      const newAnecdote = await anecdoteServices.create(asObject(content))
+      set((state) => ({
+        anecdotes: state.anecdotes.concat(newAnecdote),
+      }))
+    },
     vote: async (id) => {
       const anecdote = get().anecdotes.find((a) => a.id === id)
       const updatedAnecdote = await anecdoteServices.vote(id, {
@@ -26,10 +32,10 @@ const useAnecdoteStore = create((set, get) => ({
         ),
       }))
     },
-    add: async (content) => {
-      const newAnecdote = await anecdoteServices.create(asObject(content))
+    remove: async (id) => {
+      await anecdoteServices.remove(id)
       set((state) => ({
-        anecdotes: state.anecdotes.concat(newAnecdote),
+        anecdotes: state.anecdotes.filter((a) => a.id !== id),
       }))
     },
     setFilter: (value) => set(() => ({ filter: value })),

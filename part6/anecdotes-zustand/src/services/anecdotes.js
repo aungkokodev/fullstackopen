@@ -36,4 +36,12 @@ const vote = async (id, anecdote) => {
   return await response.json()
 }
 
-export default { getAll, create, vote }
+const remove = async (id) => {
+  const options = { method: 'DELETE' }
+
+  const request = await fetch(`${baseUrl}/${id}`, options)
+
+  if (!request.ok) throw new Error('Failed to delete anecdote')
+}
+
+export default { getAll, create, vote, remove }
