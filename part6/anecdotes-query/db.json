@@ -34,6 +34,11 @@
       "content": "Testing",
       "votes": 5,
       "id": "gUPb9zD"
+    },
+    {
+      "content": "Another testing",
+      "votes": 3,
+      "id": "BgrEM2j"
     }
   ]
 }
