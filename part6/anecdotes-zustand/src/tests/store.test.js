@@ -36,4 +36,31 @@ describe('useAnecdoteActions', () => {
 
     expect(anecdotes.current).toEqual(mock)
   })
+
+  it('anecdotes are sorted by votes', () => {
+    const anecdotes = [
+      {
+        content: 'If it hurts, do it more often',
+        id: '47145',
+        votes: 1,
+      },
+      {
+        content: 'Adding manpower to a late software project makes it later!',
+        id: '21149',
+        votes: 0,
+      },
+      {
+        content: 'Premature optimization is the root of all evil.',
+        id: '25170',
+        votes: 11,
+      },
+    ]
+    useAnecdoteStore.setState({ anecdotes })
+
+    const { result } = renderHook(() => useAnecdotes())
+
+    expect(result.current).toEqual(
+      anecdotes.toSorted((a, b) => b.votes - a.votes),
+    )
+  })
 })

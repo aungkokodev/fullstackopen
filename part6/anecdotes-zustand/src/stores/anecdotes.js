@@ -46,9 +46,10 @@ export default useAnecdoteStore
 export const useAnecdotes = () => {
   const anecdotes = useAnecdoteStore((state) => state.anecdotes)
   const filter = useAnecdoteStore((state) => state.filter)
+  const sorted = anecdotes.toSorted((a, b) => b.votes - a.votes)
 
-  if (!filter) return anecdotes
-  return anecdotes.filter((a) => RegExp(filter, 'i').test(a.content))
+  if (!filter) return sorted
+  return sorted.filter((a) => RegExp(filter, 'i').test(a.content))
 }
 export const useFilter = () => useAnecdoteStore((state) => state.filter)
 export const useAnecdoteActions = () =>
