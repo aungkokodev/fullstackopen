@@ -37,7 +37,7 @@ describe('useAnecdoteActions', () => {
     expect(anecdotes.current).toEqual(mock)
   })
 
-  it('anecdotes are sorted by votes', () => {
+  it('component receives the anecdotes sorted by votes', () => {
     const anecdotes = [
       {
         content: 'If it hurts, do it more often',
@@ -62,5 +62,34 @@ describe('useAnecdoteActions', () => {
     expect(result.current).toEqual(
       anecdotes.toSorted((a, b) => b.votes - a.votes),
     )
+  })
+
+  it('component receives a filtered list of anecdotes', () => {
+    const anecdotes = [
+      {
+        content: 'If it hurts, do it more often',
+        id: '47145',
+        votes: 0,
+      },
+      {
+        content: 'Adding manpower to a late software project makes it later!',
+        id: '21149',
+        votes: 0,
+      },
+      {
+        content: 'Premature optimization is the root of all evil.',
+        id: '25170',
+        votes: 0,
+      },
+    ]
+    useAnecdoteStore.setState({ anecdotes })
+
+    const { result } = renderHook(() => useAnecdotes())
+    const { result: actions } = renderHook(() => useAnecdoteActions())
+
+    act(() => actions.current.setFilter('optimization'))
+
+    expect(result.current).toHaveLength(1)
+    expect(result.current).toEqual([anecdotes[2]])
   })
 })
