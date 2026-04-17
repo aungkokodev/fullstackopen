@@ -22,6 +22,7 @@ const useAnecdoteStore = create((set, get) => ({
     },
     vote: async (id) => {
       const anecdote = get().anecdotes.find((a) => a.id === id)
+      console.log('vote=>>>>>>>>>>>>>', anecdote, id)
       const updatedAnecdote = await anecdoteServices.vote(id, {
         ...anecdote,
         votes: anecdote.votes + 1,

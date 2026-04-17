@@ -8,6 +8,7 @@ import useAnecdoteStore, {
 vi.mock('../services/anecdotes', () => ({
   default: {
     getAll: vi.fn(),
+    vote: vi.fn(),
   },
 }))
 
@@ -20,21 +21,18 @@ beforeEach(() => {
 
 describe('useAnecdoteActions', () => {
   it('initialize with the anecdotes returned by the backend', async () => {
-    const mock = [
-      {
-        content: 'If it hurts, do it more often',
-        id: '47145',
-        votes: 0,
-      },
-    ]
-    anecdoteServices.getAll.mockResolvedValue(mock)
+    const anecdote = {
+      content: 'If it hurts, do it more often',
+      id: '47145',
+      votes: 0,
+    }
+    anecdoteServices.getAll.mockResolvedValue([anecdote])
 
     const { result: anecdotes } = renderHook(() => useAnecdotes())
     const { result: actions } = renderHook(() => useAnecdoteActions())
 
-    await act(async () => actions.current.initialize())
-
-    expect(anecdotes.current).toEqual(mock)
+    await act(async () => await actions.current.initialize())
+    expect(anecdotes.current).toEqual([anecdote])
   })
 
   it('component receives the anecdotes sorted by votes', () => {
@@ -58,7 +56,6 @@ describe('useAnecdoteActions', () => {
     useAnecdoteStore.setState({ anecdotes })
 
     const { result } = renderHook(() => useAnecdotes())
-
     expect(result.current).toEqual(
       anecdotes.toSorted((a, b) => b.votes - a.votes),
     )
@@ -88,8 +85,29 @@ describe('useAnecdoteActions', () => {
     const { result: actions } = renderHook(() => useAnecdoteActions())
 
     act(() => actions.current.setFilter('optimization'))
-
     expect(result.current).toHaveLength(1)
     expect(result.current).toEqual([anecdotes[2]])
+  })
+
+  it('voting increases the number of votes for an anecdote', async () => {
+    const anecdote = {
+      content: 'If it hurts, do it more often',
+      id: 1,
+      votes: 0,
+    }
+    useAnecdoteStore.setState({ anecdotes: [anecdote] })
+    anecdoteServices.vote.mockResolvedValue({
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    })
+
+    const { result: anecdotes } = renderHook(() => useAnecdotes())
+    const { result: actions } = renderHook(() => useAnecdoteActions())
+
+    await act(async () => await actions.current.vote(1))
+    expect(anecdotes.current).toContainEqual({
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    })
   })
 })
