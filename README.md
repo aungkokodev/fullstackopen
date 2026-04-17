@@ -19,3 +19,7 @@
 - [Part 5](https://github.com/aungkokodev/fullstackopen/tree/main/part5)
   - [blog](https://github.com/aungkokodev/fullstackopen/tree/main/part5/blog)
   - [e2e](https://github.com/aungkokodev/fullstackopen/tree/main/part5/e2e)
+- [Part 6](https://github.com/aungkokodev/fullstackopen/tree/main/part6)
+  - [unicafe-zustand](https://github.com/aungkokodev/fullstackopen/tree/main/part6/unicafe-zustand)
+  - [anecdotes-zustand](https://github.com/aungkokodev/fullstackopen/tree/main/part6/anecdotes-zustand)
+  - [anecdotes-query](https://github.com/aungkokodev/fullstackopen/tree/main/part6/anecdotes-query)
