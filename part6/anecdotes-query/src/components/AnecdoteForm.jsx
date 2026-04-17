@@ -1,10 +1,9 @@
-import { useContext } from 'react'
 import { useAnecdote } from '../hooks/useAnecdote'
-import NotificationContext from '../Context/NotificationContext'
+import useNotify from '../hooks/useNotify'
 
 const AnecdoteForm = () => {
   const { createAnecdote } = useAnecdote()
-  const { notify } = useContext(NotificationContext)
+  const { notify } = useNotify()
 
   const onCreate = (event) => {
     event.preventDefault()

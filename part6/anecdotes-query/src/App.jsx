@@ -1,13 +1,12 @@
-import { useContext } from 'react'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import NotificationContext from './Context/NotificationContext'
 import { useAnecdote } from './hooks/useAnecdote'
+import useNotify from './hooks/useNotify'
 
 const App = () => {
   const { anecdotes, isPending, voteAnecdote } = useAnecdote()
 
-  const { notify } = useContext(NotificationContext)
+  const { notify } = useNotify()
 
   if (isPending) return <div>loading data...</div>
 
