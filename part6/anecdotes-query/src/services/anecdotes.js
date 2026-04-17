@@ -17,7 +17,10 @@ const create = async (anecdote) => {
 
   const response = await fetch(baseUrl, options)
 
-  if (!response.ok) throw new Error('Failed to create anecdote')
+  if (!response.ok) {
+    const json = await response.json()
+    throw new Error(json.error)
+  }
 
   return await response.json()
 }
@@ -36,4 +39,4 @@ const update = async (anecdote) => {
   return await response.json()
 }
 
-export { getAll, create, update }
+export { create, getAll, update }
