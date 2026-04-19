@@ -23,16 +23,19 @@ export const useAnecdotes = () => {
     anecdoteServices.getAll().then((anecdotes) => setAnecdotes(anecdotes))
   }, [])
 
-  const addAnecdote = (anecdote) => {
-    anecdoteServices
-      .createNew(anecdote)
-      .then((anecdote) =>
-        setAnecdotes((anecdotes) => anecdotes.concat(anecdote)),
-      )
+  const addAnecdote = async (anecdote) => {
+    const newAnecdote = await anecdoteServices.createNew(anecdote)
+    setAnecdotes((anecdotes) => anecdotes.concat(newAnecdote))
+  }
+
+  const deleteAnecdote = async (id) => {
+    await anecdoteServices.deleteAnecdote(id)
+    setAnecdotes((anecdotes) => anecdotes.filter((a) => a.id !== id))
   }
 
   return {
     anecdotes,
     addAnecdote,
+    deleteAnecdote,
   }
 }
