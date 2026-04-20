@@ -10,12 +10,14 @@ import NotFound from './components/NotFound'
 import Notification from './components/Notificatioin'
 import blogService from './services/blog'
 import loginService from './services/login'
+import { useBlog, useBlogActions } from './stores/blog'
 import { useNotificationActions } from './stores/notification'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const { notify } = useNotificationActions()
+  const blogs = useBlog()
+  const blogActions = useBlogActions()
 
   const navigate = useNavigate()
   const match = useMatch('/blogs/:id')
@@ -41,8 +43,7 @@ const App = () => {
 
   const createBlog = async (blog) => {
     try {
-      const newBlog = await blogService.create(blog)
-      setBlogs((b) => b.concat(newBlog))
+      await blogActions.create(blog)
       notify(`a new blog ${blog.title} by ${blog.author} added`)
     } catch (error) {
       notify(error.response.data.error, true)
@@ -73,7 +74,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    blogActions.initialize()
 
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
