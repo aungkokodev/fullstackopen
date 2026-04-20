@@ -2,10 +2,12 @@ import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useNotificationActions } from '../stores/notification'
 
-const LoginForm = ({ handleLogin, displayNotification }) => {
+const LoginForm = ({ handleLogin }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const { notify } = useNotificationActions()
 
   const navigate = useNavigate()
 
@@ -16,8 +18,9 @@ const LoginForm = ({ handleLogin, displayNotification }) => {
       setUsername('')
       setPassword('')
       navigate('/')
+      notify('Login successful')
     } catch (error) {
-      displayNotification(error.response.data.error, true)
+      notify(error.response.data.error, true)
     }
   }
 

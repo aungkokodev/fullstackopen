@@ -4,18 +4,18 @@ import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
+import ErrorBoundary from './components/ErrorBoundary'
 import LoginForm from './components/LoginForm'
+import NotFound from './components/NotFound'
 import Notification from './components/Notificatioin'
 import blogService from './services/blog'
 import loginService from './services/login'
-import ErrorBoundary from './components/ErrorBoundary'
-import NotFound from './components/NotFound'
+import { useNotificationActions } from './stores/notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState('')
-  const [isError, setIsError] = useState(false)
+  const { notify } = useNotificationActions()
 
   const navigate = useNavigate()
   const match = useMatch('/blogs/:id')
@@ -36,27 +36,16 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.setToken(null)
     setUser(null)
-    console.log('before')
     navigate('/')
-    console.log('after')
-  }
-
-  const displayNotification = (msg, err = false) => {
-    setMessage(msg)
-    setIsError(err)
-    setTimeout(() => {
-      setMessage('')
-      setIsError(false)
-    }, 5000)
   }
 
   const createBlog = async (blog) => {
     try {
       const newBlog = await blogService.create(blog)
       setBlogs((b) => b.concat(newBlog))
-      displayNotification(`a new blog ${blog.title} by ${blog.author} added`)
+      notify(`a new blog ${blog.title} by ${blog.author} added`)
     } catch (error) {
-      displayNotification(error.response.data.error, true)
+      notify(error.response.data.error, true)
       throw new Error()
     }
   }
@@ -67,7 +56,7 @@ const App = () => {
       const newBlogList = blogs.map((b) => (b.id === blog.id ? newBlog : b))
       setBlogs(newBlogList)
     } catch (error) {
-      displayNotification(error.response.data.error, true)
+      notify(error.response.data.error, true)
     }
   }
 
@@ -76,12 +65,10 @@ const App = () => {
       await blogService.remove(blog.id)
       const newBlogList = blogs.filter((b) => b.id !== blog.id)
       setBlogs(newBlogList)
-      displayNotification(
-        `Successfully deleted ${blog.title} by ${blog.author}`,
-      )
+      notify(`Successfully deleted ${blog.title} by ${blog.author}`)
       navigate('/')
     } catch (error) {
-      displayNotification(error.response.data.error, true)
+      notify(error.response.data.error, true)
     }
   }
 
@@ -140,7 +127,7 @@ const App = () => {
           </nav>
         </Toolbar>
       </AppBar>
-      <Notification message={message} isError={isError} />
+      <Notification />
       <ErrorBoundary>
         <Routes>
           <Route
@@ -163,12 +150,7 @@ const App = () => {
           {!user && (
             <Route
               path="/login"
-              element={
-                <LoginForm
-                  handleLogin={handleLogin}
-                  displayNotification={displayNotification}
-                />
-              }
+              element={<LoginForm handleLogin={handleLogin} />}
             />
           )}
           <Route
