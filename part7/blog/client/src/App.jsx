@@ -53,9 +53,7 @@ const App = () => {
 
   const updateBlog = async (blog) => {
     try {
-      const newBlog = await blogService.update(blog)
-      const newBlogList = blogs.map((b) => (b.id === blog.id ? newBlog : b))
-      setBlogs(newBlogList)
+      await blogActions.like(blog)
     } catch (error) {
       notify(error.response.data.error, true)
     }
@@ -63,9 +61,7 @@ const App = () => {
 
   const deleteBlog = async (blog) => {
     try {
-      await blogService.remove(blog.id)
-      const newBlogList = blogs.filter((b) => b.id !== blog.id)
-      setBlogs(newBlogList)
+      await blogActions.remove(blog.id)
       notify(`Successfully deleted ${blog.title} by ${blog.author}`)
       navigate('/')
     } catch (error) {
@@ -83,11 +79,6 @@ const App = () => {
       setUser(user)
     }
   }, [])
-
-  const canDelete = (username) => {
-    if (!user || user?.username !== username) return false
-    return true
-  }
 
   return (
     <Container>
@@ -131,17 +122,7 @@ const App = () => {
       <Notification />
       <ErrorBoundary>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <BlogList
-                blogs={blogs}
-                updateBlog={updateBlog}
-                deleteBlog={deleteBlog}
-                canDelete={canDelete}
-              />
-            }
-          />
+          <Route path="/" element={<BlogList blogs={blogs} />} />
           {user && (
             <Route
               path="/create"
