@@ -8,6 +8,7 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notificatioin'
 import blogService from './services/blog'
 import loginService from './services/login'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -135,48 +136,50 @@ const App = () => {
         </Toolbar>
       </AppBar>
       <Notification message={message} isError={isError} />
-      <Routes>
-        <Route
-          path='/'
-          element={
-            <BlogList
-              blogs={blogs}
-              updateBlog={updateBlog}
-              deleteBlog={deleteBlog}
-              canDelete={canDelete}
-            />
-          }
-        />
-        {user && (
+      <ErrorBoundary>
+        <Routes>
           <Route
-            path='/create'
-            element={<BlogForm createBlog={createBlog} />}
-          />
-        )}
-        {!user && (
-          <Route
-            path='/login'
+            path='/'
             element={
-              <LoginForm
-                handleLogin={handleLogin}
-                displayNotification={displayNotification}
+              <BlogList
+                blogs={blogs}
+                updateBlog={updateBlog}
+                deleteBlog={deleteBlog}
+                canDelete={canDelete}
               />
             }
           />
-        )}
-        <Route
-          path='/blogs/:id'
-          element={
-            <Blog
-              blog={blog}
-              updateBlog={updateBlog}
-              deleteBlog={deleteBlog}
-              canDelete={user?.username === blog?.user.username}
-              canLike={!!user}
+          {user && (
+            <Route
+              path='/create'
+              element={<BlogForm createBlog={createBlog} />}
             />
-          }
-        />
-      </Routes>
+          )}
+          {!user && (
+            <Route
+              path='/login'
+              element={
+                <LoginForm
+                  handleLogin={handleLogin}
+                  displayNotification={displayNotification}
+                />
+              }
+            />
+          )}
+          <Route
+            path='/blogs/:id'
+            element={
+              <Blog
+                blog={blog}
+                updateBlog={updateBlog}
+                deleteBlog={deleteBlog}
+                canDelete={user?.username === blog?.user.username}
+                canLike={!!user}
+              />
+            }
+          />
+        </Routes>
+      </ErrorBoundary>
     </Container>
   )
 }
