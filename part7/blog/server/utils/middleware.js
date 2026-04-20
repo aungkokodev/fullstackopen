@@ -8,7 +8,7 @@ morgan.token('body', (request) => JSON.stringify(request.body))
 const requestLogger =
   process.env.NODE_ENV !== 'test'
     ? morgan(
-        ':method :url :status :res[content-length] - :response-time ms :body'
+        ':method :url :status :res[content-length] - :response-time ms :body',
       )
     : (request, response, next) => next()
 

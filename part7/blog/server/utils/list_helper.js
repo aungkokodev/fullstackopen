@@ -12,7 +12,7 @@ const favoriteBlog = (blogs) => {
   if (blogs.length === 0) return null
 
   const blog = blogs.reduce((favorite, blog) =>
-    blog.likes > favorite.likes ? blog : favorite
+    blog.likes > favorite.likes ? blog : favorite,
   )
 
   return { title: blog.title, author: blog.author, likes: blog.likes }
@@ -28,7 +28,7 @@ const mostBlog = (blogs) => {
   }, {})
 
   const [author, count] = Object.entries(obj).reduce((a, c) =>
-    a[1] > c[1] ? a : c
+    a[1] > c[1] ? a : c,
   )
 
   return { author, blogs: count }
@@ -44,7 +44,7 @@ const mostLikes = (blogs) => {
   }, {})
 
   const [author, likes] = Object.entries(obj).reduce((a, c) =>
-    a[1] > c[1] ? a : c
+    a[1] > c[1] ? a : c,
   )
 
   return { author, likes }

@@ -28,38 +28,38 @@ const BlogForm = ({ createBlog }) => {
       <h2>create new</h2>
       <div>
         <TextField
-          type='text'
-          label='title'
+          type="text"
+          label="title"
           value={title}
           onChange={({ target }) => setTitle(target.value)}
-          id='blog-title-input'
-          size='small'
+          id="blog-title-input"
+          size="small"
           sx={{ marginBottom: 2 }}
         />
       </div>
       <div>
         <TextField
-          type='text'
-          label='author'
+          type="text"
+          label="author"
           value={author}
           onChange={({ target }) => setAuthor(target.value)}
-          id='blog-author-input'
-          size='small'
+          id="blog-author-input"
+          size="small"
           sx={{ marginBottom: 2 }}
         />
       </div>
       <div>
         <TextField
-          type='text'
-          label='url'
+          type="text"
+          label="url"
           value={url}
           onChange={({ target }) => setUrl(target.value)}
-          id='blog-url-input'
-          size='small'
+          id="blog-url-input"
+          size="small"
           sx={{ marginBottom: 2 }}
         />
       </div>
-      <Button type='submit' variant='contained'>
+      <Button type="submit" variant="contained">
         create
       </Button>
     </form>

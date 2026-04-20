@@ -24,7 +24,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
 
   return (
     <Paper
-      className='blog'
+      className="blog"
       sx={{
         padding: '1rem',
         marginTop: '1rem',
@@ -35,28 +35,28 @@ const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
       }}
     >
       <Typography
-        className='blog-title'
-        component='h2'
+        className="blog-title"
+        component="h2"
         sx={{ fontWeight: 'bold', fontSize: '1.5rem' }}
       >
         {blog.title}
       </Typography>
-      <Typography className='blog-author' component='h3' sx={{ color: 'gray' }}>
+      <Typography className="blog-author" component="h3" sx={{ color: 'gray' }}>
         by {blog.author}
       </Typography>
-      <a className='blog-url' href={blog.url}>
+      <a className="blog-url" href={blog.url}>
         {blog.url}
       </a>
-      <Typography className='blog-user' component='p' sx={{ color: 'gray' }}>
+      <Typography className="blog-user" component="p" sx={{ color: 'gray' }}>
         Added by {blog.user.name}
       </Typography>
       <Box sx={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-        <span className='blog-likes'>{blog.likes} likes</span>
+        <span className="blog-likes">{blog.likes} likes</span>
         {canDelete && (
           <Button
-            variant='outlined'
-            size='small'
-            color='error'
+            variant="outlined"
+            size="small"
+            color="error"
             onClick={handleBlogDelete}
           >
             remove
@@ -64,9 +64,9 @@ const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
         )}
         {canLike && (
           <Button
-            variant='outlined'
-            size='small'
-            color='primary'
+            variant="outlined"
+            size="small"
+            color="primary"
             onClick={handleBlogUpdate}
           >
             like

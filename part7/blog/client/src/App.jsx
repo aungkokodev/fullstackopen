@@ -103,36 +103,40 @@ const App = () => {
 
   return (
     <Container>
-      <AppBar position='static'>
+      <AppBar position="static">
         <Toolbar>
-          <Typography component={'h1'} sx={{ flexGrow: 1 }}>
+          <Typography
+            component={'h1'}
+            sx={{
+              flexGrow: 1,
+            }}
+          >
             Blog App
           </Typography>
           <nav>
-            <Button color='inherit' component={Link} to='/'>
+            <Button color="inherit" component={Link} to="/">
               blogs
             </Button>
             {user && (
               <Button
-                color='inherit'
+                color="inherit"
                 component={Link}
-                to='/create'
+                to="/create"
                 nativeButton={false}
               >
                 new blog
               </Button>
             )}
-            {
-              user ?
-                <Button color='inherit' onClick={handleLogout}>
-                  logout
-                </Button>
-                // eslint-disable-next-line indent
-              : <Button color='inherit' component={Link} to='/login'>
-                  login
-                </Button>
-
-            }
+            {user ? (
+              <Button color="inherit" onClick={handleLogout}>
+                logout
+              </Button>
+            ) : (
+              // eslint-disable-next-line indent
+              <Button color="inherit" component={Link} to="/login">
+                login
+              </Button>
+            )}
           </nav>
         </Toolbar>
       </AppBar>
@@ -140,7 +144,7 @@ const App = () => {
       <ErrorBoundary>
         <Routes>
           <Route
-            path='/'
+            path="/"
             element={
               <BlogList
                 blogs={blogs}
@@ -152,13 +156,13 @@ const App = () => {
           />
           {user && (
             <Route
-              path='/create'
+              path="/create"
               element={<BlogForm createBlog={createBlog} />}
             />
           )}
           {!user && (
             <Route
-              path='/login'
+              path="/login"
               element={
                 <LoginForm
                   handleLogin={handleLogin}
@@ -168,7 +172,7 @@ const App = () => {
             />
           )}
           <Route
-            path='/blogs/:id'
+            path="/blogs/:id"
             element={
               <Blog
                 blog={blog}
@@ -179,7 +183,7 @@ const App = () => {
               />
             }
           />
-          <Route path='*' element={<NotFound />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </ErrorBoundary>
     </Container>

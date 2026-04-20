@@ -28,23 +28,23 @@ const LoginForm = ({ handleLogin, displayNotification }) => {
       <form onSubmit={handleSubmit}>
         <div>
           <TextField
-            type='text'
-            variant='standard'
-            label='username'
+            type="text"
+            variant="standard"
+            label="username"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
           <TextField
-            type='password'
-            variant='standard'
-            label='password'
+            type="password"
+            variant="standard"
+            label="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <Button type='submit' variant='contained' sx={{ marginTop: 2 }}>
+        <Button type="submit" variant="contained" sx={{ marginTop: 2 }}>
           login
         </Button>
       </form>
