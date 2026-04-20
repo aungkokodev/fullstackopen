@@ -9,6 +9,7 @@ import Notification from './components/Notificatioin'
 import blogService from './services/blog'
 import loginService from './services/login'
 import ErrorBoundary from './components/ErrorBoundary'
+import NotFound from './components/NotFound'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -178,6 +179,7 @@ const App = () => {
               />
             }
           />
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </ErrorBoundary>
     </Container>

@@ -1,5 +1,6 @@
 import { Box, Button, Paper, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
+import NotFound from './NotFound'
 
 const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
   const handleBlogUpdate = () => {
@@ -19,7 +20,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
     if (ok) deleteBlog(blog)
   }
 
-  if (!blog) return null
+  if (!blog) return <NotFound />
 
   return (
     <Paper
