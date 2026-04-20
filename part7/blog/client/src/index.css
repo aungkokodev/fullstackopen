@@ -1,0 +1,16 @@
+.noti {
+  border: 4px solid green;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.noti.successs {
+  color: green;
+  border-color: green;
+}
+
+.noti.error {
+  color: red;
+  border-color: red;
+}
