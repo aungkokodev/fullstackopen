@@ -1,12 +1,12 @@
 import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useNotificationActions } from '../stores/notification'
+import useField from '../useField'
 
 const LoginForm = ({ handleLogin }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const { reset: resetUsername, ...username } = useField('text')
+  const { reset: resetPassword, ...password } = useField('password')
   const { notify } = useNotificationActions()
 
   const navigate = useNavigate()
@@ -14,9 +14,9 @@ const LoginForm = ({ handleLogin }) => {
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
-      await handleLogin(username, password)
-      setUsername('')
-      setPassword('')
+      await handleLogin(username.value, password.value)
+      resetUsername('')
+      resetPassword('')
       navigate('/')
       notify('Login successful')
     } catch (error) {
@@ -30,22 +30,10 @@ const LoginForm = ({ handleLogin }) => {
 
       <form onSubmit={handleSubmit}>
         <div>
-          <TextField
-            type="text"
-            variant="standard"
-            label="username"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
+          <TextField variant="standard" label="username" {...username} />
         </div>
         <div>
-          <TextField
-            type="password"
-            variant="standard"
-            label="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          <TextField variant="standard" label="password" {...password} />
         </div>
         <Button type="submit" variant="contained" sx={{ marginTop: 2 }}>
           login

@@ -1,22 +1,26 @@
 import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import useField from '../useField'
 
 const BlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const { reset: resetTitle, ...title } = useField('text')
+  const { reset: resetAuthor, ...author } = useField('text')
+  const { reset: resetUrl, ...url } = useField('text')
 
   const navigate = useNavigate()
 
   const handleSubmit = async (event) => {
     try {
       event.preventDefault()
-      await createBlog({ title, author, url })
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      await createBlog({
+        title: title.value,
+        author: author.value,
+        url: url.value,
+      })
+      resetTitle('')
+      resetAuthor('')
+      resetUrl('')
       navigate('/')
     } catch (error) {
       console.log(error)
@@ -28,10 +32,8 @@ const BlogForm = ({ createBlog }) => {
       <h2>create new</h2>
       <div>
         <TextField
-          type="text"
+          {...title}
           label="title"
-          value={title}
-          onChange={({ target }) => setTitle(target.value)}
           id="blog-title-input"
           size="small"
           sx={{ marginBottom: 2 }}
@@ -39,10 +41,8 @@ const BlogForm = ({ createBlog }) => {
       </div>
       <div>
         <TextField
-          type="text"
+          {...author}
           label="author"
-          value={author}
-          onChange={({ target }) => setAuthor(target.value)}
           id="blog-author-input"
           size="small"
           sx={{ marginBottom: 2 }}
@@ -50,10 +50,8 @@ const BlogForm = ({ createBlog }) => {
       </div>
       <div>
         <TextField
-          type="text"
+          {...url}
           label="url"
-          value={url}
-          onChange={({ target }) => setUrl(target.value)}
           id="blog-url-input"
           size="small"
           sx={{ marginBottom: 2 }}
