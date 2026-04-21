@@ -1,5 +1,5 @@
 import { AppBar, Button, Container, Toolbar, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
@@ -8,16 +8,16 @@ import ErrorBoundary from './components/ErrorBoundary'
 import LoginForm from './components/LoginForm'
 import NotFound from './components/NotFound'
 import Notification from './components/Notificatioin'
-import blogService from './services/blog'
-import loginService from './services/login'
 import { useBlog, useBlogActions } from './stores/blog'
 import { useNotificationActions } from './stores/notification'
+import { useUser, useUserAction } from './stores/user'
 
 const App = () => {
-  const [user, setUser] = useState(null)
-  const { notify } = useNotificationActions()
+  const user = useUser()
+  const userActions = useUserAction()
   const blogs = useBlog()
   const blogActions = useBlogActions()
+  const { notify } = useNotificationActions()
 
   const navigate = useNavigate()
   const match = useMatch('/blogs/:id')
@@ -25,19 +25,11 @@ const App = () => {
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
 
   const handleLogin = async (username, password) => {
-    const user = await loginService.login({
-      username,
-      password,
-    })
-    window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-    blogService.setToken(user.token)
-    setUser(user)
+    await userActions.login({ username, password })
   }
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogappUser')
-    blogService.setToken(null)
-    setUser(null)
+  const handleLogout = async () => {
+    await userActions.logout()
     navigate('/')
   }
 
@@ -71,13 +63,7 @@ const App = () => {
 
   useEffect(() => {
     blogActions.initialize()
-
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      blogService.setToken(user.token)
-      setUser(user)
-    }
+    userActions.initialize()
   }, [])
 
   return (
@@ -111,7 +97,6 @@ const App = () => {
                 logout
               </Button>
             ) : (
-              // eslint-disable-next-line indent
               <Button color="inherit" component={Link} to="/login">
                 login
               </Button>
