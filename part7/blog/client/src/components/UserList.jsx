@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { useUser, useUserActions } from '../stores/user'
 import {
   Table,
   TableBody,
@@ -8,18 +6,20 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
+import { useBlog } from '../stores/blog'
 
-const UserList = () => {
-  const users = useUser()
-  const userActions = useUserActions()
-
-  useEffect(() => {
-    userActions.initialize()
-  }, [])
-
+const UserList = ({ users }) => {
+  const blogs = useBlog()
   const style = {
     fontWeight: 'bold',
   }
+
+  const userBlog = users.map((user) => ({
+    ...user,
+    blogs: blogs.filter((b) => b.user.id === user.id),
+  }))
 
   return (
     <div>
@@ -34,9 +34,11 @@ const UserList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
+            {userBlog.map((user) => (
               <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
+                <TableCell>
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
+                </TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.blogs.length}</TableCell>
               </TableRow>
@@ -49,3 +51,7 @@ const UserList = () => {
 }
 
 export default UserList
+
+UserList.propTypes = {
+  users: PropTypes.arrayOf(PropTypes.object).isRequired,
+}

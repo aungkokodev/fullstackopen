@@ -12,18 +12,29 @@ import UserList from './components/UserList'
 import { useBlog, useBlogActions } from './stores/blog'
 import { useLogin, useLoginActions } from './stores/login'
 import { useNotificationActions } from './stores/notification'
+import User from './components/User'
+import { useUser, useUserActions } from './stores/user'
 
 const App = () => {
-  const user = useLogin()
+  const auth = useLogin()
   const loginActions = useLoginActions()
   const blogs = useBlog()
   const blogActions = useBlogActions()
+  const users = useUser()
+  const userActions = useUserActions()
   const { notify } = useNotificationActions()
 
   const navigate = useNavigate()
-  const match = useMatch('/blogs/:id')
 
-  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
+  const matchBlog = useMatch('/blogs/:id')
+  const blog = matchBlog
+    ? blogs.find((blog) => blog.id === matchBlog.params.id)
+    : null
+
+  const matchUser = useMatch('/users/:id')
+  const user = matchUser
+    ? users.find((user) => user.id === matchUser.params.id)
+    : null
 
   const handleLogin = async (username, password) => {
     await loginActions.login({ username, password })
@@ -65,7 +76,10 @@ const App = () => {
   useEffect(() => {
     blogActions.initialize()
     loginActions.initialize()
-  }, [])
+    userActions.initialize()
+  }, [blogActions, loginActions, userActions])
+
+  useEffect(() => {})
 
   return (
     <Container>
@@ -86,7 +100,7 @@ const App = () => {
             <Button color="inherit" component={Link} to="/users">
               users
             </Button>
-            {user && (
+            {auth && (
               <Button
                 color="inherit"
                 component={Link}
@@ -96,7 +110,7 @@ const App = () => {
                 new blog
               </Button>
             )}
-            {user ? (
+            {auth ? (
               <Button color="inherit" onClick={handleLogout}>
                 logout
               </Button>
@@ -112,19 +126,6 @@ const App = () => {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<BlogList blogs={blogs} />} />
-          <Route path="/users" element={<UserList />} />
-          {user && (
-            <Route
-              path="/create"
-              element={<BlogForm createBlog={createBlog} />}
-            />
-          )}
-          {!user && (
-            <Route
-              path="/login"
-              element={<LoginForm handleLogin={handleLogin} />}
-            />
-          )}
           <Route
             path="/blogs/:id"
             element={
@@ -132,11 +133,25 @@ const App = () => {
                 blog={blog}
                 updateBlog={updateBlog}
                 deleteBlog={deleteBlog}
-                canDelete={user?.username === blog?.user.username}
-                canLike={!!user}
+                canDelete={auth?.username === blog?.user.username}
+                canLike={!!auth}
               />
             }
           />
+          <Route path="/users" element={<UserList users={users} />} />
+          <Route path="/users/:id" element={<User user={user} />} />
+          {auth && (
+            <Route
+              path="/create"
+              element={<BlogForm createBlog={createBlog} />}
+            />
+          )}
+          {!auth && (
+            <Route
+              path="/login"
+              element={<LoginForm handleLogin={handleLogin} />}
+            />
+          )}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ErrorBoundary>
