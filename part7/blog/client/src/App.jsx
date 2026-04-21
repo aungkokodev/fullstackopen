@@ -8,13 +8,14 @@ import ErrorBoundary from './components/ErrorBoundary'
 import LoginForm from './components/LoginForm'
 import NotFound from './components/NotFound'
 import Notification from './components/Notificatioin'
+import UserList from './components/UserList'
 import { useBlog, useBlogActions } from './stores/blog'
+import { useLogin, useLoginActions } from './stores/login'
 import { useNotificationActions } from './stores/notification'
-import { useUser, useUserAction } from './stores/user'
 
 const App = () => {
-  const user = useUser()
-  const userActions = useUserAction()
+  const user = useLogin()
+  const loginActions = useLoginActions()
   const blogs = useBlog()
   const blogActions = useBlogActions()
   const { notify } = useNotificationActions()
@@ -25,11 +26,11 @@ const App = () => {
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
 
   const handleLogin = async (username, password) => {
-    await userActions.login({ username, password })
+    await loginActions.login({ username, password })
   }
 
   const handleLogout = async () => {
-    await userActions.logout()
+    await loginActions.logout()
     navigate('/')
   }
 
@@ -63,7 +64,7 @@ const App = () => {
 
   useEffect(() => {
     blogActions.initialize()
-    userActions.initialize()
+    loginActions.initialize()
   }, [])
 
   return (
@@ -81,6 +82,9 @@ const App = () => {
           <nav>
             <Button color="inherit" component={Link} to="/">
               blogs
+            </Button>
+            <Button color="inherit" component={Link} to="/users">
+              users
             </Button>
             {user && (
               <Button
@@ -108,6 +112,7 @@ const App = () => {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<BlogList blogs={blogs} />} />
+          <Route path="/users" element={<UserList />} />
           {user && (
             <Route
               path="/create"

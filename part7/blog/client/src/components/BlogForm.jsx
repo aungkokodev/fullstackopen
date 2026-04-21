@@ -1,7 +1,7 @@
 import { Button, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-import useField from '../useField'
+import useField from '../hooks/useField'
 
 const BlogForm = ({ createBlog }) => {
   const { reset: resetTitle, ...title } = useField('text')
