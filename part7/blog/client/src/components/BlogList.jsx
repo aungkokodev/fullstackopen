@@ -1,3 +1,4 @@
+import { List, ListItem, ListItemText } from '@mui/material'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
@@ -8,13 +9,15 @@ const BlogList = ({ blogs }) => {
       {blogs.length === 0 ? (
         <p>No blogs available.</p>
       ) : (
-        <ul>
+        <List>
           {blogs.map((blog) => (
-            <li key={blog.id}>
-              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-            </li>
+            <ListItem key={blog.id} sx={{ paddingLeft: 0 }}>
+              <ListItemText>
+                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+              </ListItemText>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       )}
     </>
   )

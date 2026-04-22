@@ -1,4 +1,13 @@
-import { Box, Button, Paper, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material'
 import PropTypes from 'prop-types'
 import useField from '../hooks/useField'
 import { useBlogActions } from '../stores/blog'
@@ -103,11 +112,38 @@ const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
             </Button>
           </Box>
         )}
-        <ul>
+        <List sx={{ marginLeft: 1, marginTop: 2 }}>
           {blog.comments.map((comment, i) => (
-            <li key={i}>{comment}</li>
+            <ListItem
+              key={i}
+              sx={{
+                borderLeft: 1,
+                borderColor: '#ccc',
+                paddingLeft: '20px',
+                position: 'relative',
+                ':before': {
+                  content: '""',
+                  position: 'absolute',
+                  transform: 'translate(-21px, -16px)',
+                  width: 16,
+                  height: 32,
+                  color: '#ccc',
+                  borderBottom: 1,
+                  borderLeft: 1,
+                  borderBottomLeftRadius: 10,
+                },
+                ':last-child': {
+                  border: 'none',
+                  ':before': {
+                    transform: 'translate(-20px, -16px)',
+                  },
+                },
+              }}
+            >
+              <ListItemText>{comment}</ListItemText>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </Box>
     </Paper>
   )

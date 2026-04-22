@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { useBlog } from '../stores/blog'
+import { List, ListItem, ListItemText } from '@mui/material'
 
 const User = ({ user }) => {
   const blogs = useBlog()
@@ -16,13 +17,15 @@ const User = ({ user }) => {
     <div>
       <h2>{userBlog.name}</h2>
       <p>added blogs</p>
-      <ul>
+      <List>
         {userBlog.blogs.map((blog) => (
-          <li key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-          </li>
+          <ListItem key={blog.id} sx={{ padding: 0 }}>
+            <ListItemText>
+              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+            </ListItemText>
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }
