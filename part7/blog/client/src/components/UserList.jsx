@@ -24,28 +24,32 @@ const UserList = ({ users }) => {
   return (
     <div>
       <h2>Users</h2>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell style={style}>Name</TableCell>
-              <TableCell style={style}>Username</TableCell>
-              <TableCell style={style}>Blogs created</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {userBlog.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <Link to={`/users/${user.id}`}>{user.name}</Link>
-                </TableCell>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.blogs.length}</TableCell>
+      {users.length === 0 ? (
+        <p>No users available.</p>
+      ) : (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell style={style}>Name</TableCell>
+                <TableCell style={style}>Username</TableCell>
+                <TableCell style={style}>Blogs created</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {userBlog.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Link to={`/users/${user.id}`}>{user.name}</Link>
+                  </TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.blogs.length}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </div>
   )
 }

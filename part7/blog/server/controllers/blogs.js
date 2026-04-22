@@ -90,6 +90,10 @@ blogRouter.post('/:id/comments', async (request, response) => {
     return response.status(401).json({ error: 'token invalide' })
 
   const comment = request.body.comment
+  if (comment?.length < 4)
+    return response
+      .status(400)
+      .json({ error: 'comment must be at least 4 character long' })
 
   const updatedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
