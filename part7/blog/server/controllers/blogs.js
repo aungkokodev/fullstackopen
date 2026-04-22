@@ -83,4 +83,23 @@ blogRouter.delete('/:id', async (request, response) => {
   response.status(204).end()
 })
 
+blogRouter.post('/:id/comments', async (request, response) => {
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+  if (!decodedToken)
+    return response.status(401).json({ error: 'token invalide' })
+
+  const comment = request.body.comment
+
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    request.params.id,
+    {
+      $push: { comments: comment },
+    },
+    { new: true },
+  ).populate('user', { username: 1, name: 1 })
+
+  response.status(200).json(updatedBlog)
+})
+
 module.exports = blogRouter

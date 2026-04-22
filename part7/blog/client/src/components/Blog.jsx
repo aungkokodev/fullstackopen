@@ -73,6 +73,16 @@ const Blog = ({ blog, updateBlog, deleteBlog, canDelete, canLike }) => {
           </Button>
         )}
       </Box>
+      <Box sx={{ mt: 4 }}>
+        <Typography component="h2" sx={{ fontSize: '1.25rem' }}>
+          comments
+        </Typography>
+        <ul>
+          {blog.comments.map((comment, i) => (
+            <li key={i}>{comment}</li>
+          ))}
+        </ul>
+      </Box>
     </Paper>
   )
 }
