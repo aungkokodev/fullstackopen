@@ -23,3 +23,6 @@
   - [unicafe-zustand](https://github.com/aungkokodev/fullstackopen/tree/main/part6/unicafe-zustand)
   - [anecdotes-zustand](https://github.com/aungkokodev/fullstackopen/tree/main/part6/anecdotes-zustand)
   - [anecdotes-query](https://github.com/aungkokodev/fullstackopen/tree/main/part6/anecdotes-query)
+- [Part 7](https://github.com/aungkokodev/fullstackopen/tree/main/part7)
+  - [routed-anecdotes](https://github.com/aungkokodev/fullstackopen/tree/main/part7/routed-anecdotes)
+  - [blog](https://github.com/aungkokodev/fullstackopen/tree/main/part7/blog)
